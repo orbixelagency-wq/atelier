@@ -366,3 +366,11 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+
+@media (max-width: 480px) {
+  .topbar { padding: 0 4px; }
+  .tb-btn { min-width: 28px; padding: 0 3px; }
+  .tb-btn.text { padding: 0 6px 0 4px; }
+  .tb-sep { display: none; }
+  .color-well { width: 26px; height: 26px; margin-left: 3px; }
+}

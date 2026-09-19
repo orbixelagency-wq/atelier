@@ -5,6 +5,8 @@ import {
 import { Fragment, useEffect, useRef, useState } from 'react'
 import { animFrames, exportGif, exportImage, exportLayersPng, exportPsd, exportVideo, serializeDoc } from '../../engine/io'
 import { downloadBlob, makeCanvas, pickFile } from '../../engine/util'
+import { buildPdf, buildTiff } from '../../engine/pdf'
+import { compositeDoc, frameLayers } from '../../engine/compositor'
 import { copy, copyMerged, flipCanvas, hasClipboard, paste, rotateCanvas, trimToContent } from '../../state/docOps'
 import { editor } from '../../state/editor'
 import { insertImage, renameCurrent } from '../../state/session'
@@ -138,6 +140,7 @@ export function ActionsPanel() {
   const guides = useStore((s) => s.guides)
   const refOpen = useStore((s) => s.referenceOpen)
   const tl = useStore((s) => s.timelapse)
+  const pages = useStore((s) => s.pages)
   const d = useStore((s) => s.doc)!
   const setPref = (patch: Partial<typeof prefs>) => set({ prefs: { ...prefs, ...patch } })
   const close = () => set({ panel: null })
@@ -179,7 +182,8 @@ export function ActionsPanel() {
         {tab === 'canvas' && <>
           {item(Crop, 'Recortar y redimensionar', () => { close(); editor.startCrop() })}
           {item(Maximize, 'Ajustar el lienzo al contenido', () => trimToContent())}
-          <Switch label="Asistente de animación" sub="Cada capa o grupo es un fotograma" on={anim.enabled} onChange={(v) => { set({ anim: { ...anim, enabled: v, frame: 0, playing: false } }); if (!v) editor.stop() }} />
+          <Switch label="Asistente de animación" sub="Cada capa o grupo es un fotograma" on={anim.enabled} onChange={(v) => { set({ anim: { ...anim, enabled: v, frame: 0, playing: false }, pages: { enabled: false, page: 0 } }); if (!v) editor.stop() }} />
+          <Switch label="Asistente de página" sub="Cada capa o grupo es una página: catálogos, lookbooks, cómics" on={pages.enabled} onChange={(v) => { editor.stop(); set({ pages: { enabled: v, page: 0 }, anim: { ...anim, enabled: false, playing: false } }) }} />
           <Switch label="Guía de dibujo" on={guides.enabled} onChange={(v) => set({ guides: { ...guides, enabled: v } })} />
           {item(Ruler, 'Editar guía de dibujo', () => { set({ guides: { ...guides, enabled: true }, panel: 'guides', tool: 'guide' }) })}
           <Switch label="Referencia" sub="Ventana flotante con el lienzo o una imagen" on={refOpen} onChange={(v) => set({ referenceOpen: v })} />
@@ -197,6 +201,27 @@ export function ActionsPanel() {
           {item(Download, 'PNG', () => task('Exportando PNG…', async () => downloadBlob(await exportImage(d, 'image/png'), `${name}.png`)), 'transparencia')}
           {item(Download, 'JPEG', () => task('Exportando JPEG…', async () => downloadBlob(await exportImage(d, 'image/jpeg', 0.93), `${name}.jpg`)))}
           {item(Download, 'WebP', () => task('Exportando WebP…', async () => downloadBlob(await exportImage(d, 'image/webp', 0.92), `${name}.webp`)))}
+          {item(Download, 'PDF', () => task('Generando PDF…', async () => {
+            const pt = (px: number) => (px / d.dpi) * 72
+            let pagesOut: HTMLCanvasElement[]
+            if (pages.enabled) {
+              pagesOut = frameLayers(d).map((_, i) => {
+                const c = makeCanvas(d.width, d.height)
+                compositeDoc(d, c, { includeBg: true, anim: { frame: i, onionBefore: 0, onionAfter: 0, onionOpacity: 0, bgFrame: false, fgFrame: false, playing: true } })
+                return c
+              })
+            } else {
+              const c = makeCanvas(d.width, d.height)
+              compositeDoc(d, c, { includeBg: true })
+              pagesOut = [c]
+            }
+            downloadBlob(await buildPdf(pagesOut.map((c) => ({ canvas: c, widthPt: pt(d.width), heightPt: pt(d.height) })), d.name), `${name}.pdf`)
+          }), pages.enabled ? 'todas las páginas' : 'imprimible')}
+          {item(Download, 'TIFF', () => task('Exportando TIFF…', () => {
+            const c = makeCanvas(d.width, d.height)
+            compositeDoc(d, c, { includeBg: d.bgVisible })
+            downloadBlob(buildTiff(c, d.dpi), `${name}.tif`)
+          }), 'sin compresión')}
           <div className="label" style={{ padding: '8px 10px 4px' }}>Compartir capas</div>
           {item(Layers, 'Capas como PNG', () => task('Exportando capas…', async () => {
             const files = await exportLayersPng(d)

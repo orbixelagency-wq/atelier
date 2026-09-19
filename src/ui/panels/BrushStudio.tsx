@@ -9,9 +9,9 @@ import { editor } from '../../state/editor'
 import { get, set, useStore } from '../../state/store'
 import { HSlider, Seg, Switch } from '../common'
 
-type Section = 'stroke' | 'stab' | 'taper' | 'shape' | 'grain' | 'render' | 'wet' | 'color' | 'dyn' | 'pencil' | 'props' | 'about'
+type Section = 'stroke' | 'stab' | 'taper' | 'shape' | 'dual' | 'grain' | 'render' | 'wet' | 'color' | 'dyn' | 'pencil' | 'props' | 'about'
 const SECTIONS: [Section, string][] = [
-  ['stroke', 'Trazado'], ['stab', 'Estabilización'], ['taper', 'Afinado'], ['shape', 'Forma'], ['grain', 'Grano'],
+  ['stroke', 'Trazado'], ['stab', 'Estabilización'], ['taper', 'Afinado'], ['shape', 'Forma'], ['dual', 'Pincel doble'], ['grain', 'Grano'],
   ['render', 'Renderizado'], ['wet', 'Mezcla húmeda'], ['color', 'Dinámica de color'], ['dyn', 'Dinámica'],
   ['pencil', 'Lápiz y presión'], ['props', 'Propiedades'], ['about', 'Acerca de'],
 ]
@@ -203,6 +203,22 @@ export function BrushStudio() {
         {S('Opacidad mínima', b.props.minOpacity, (v) => up('props', { minOpacity: v }))}
         <Switch label="Orientar a la pantalla" sub="La punta no gira al rotar el lienzo" on={b.props.screenOrient} onChange={(v) => up('props', { screenOrient: v })} />
       </>
+      case 'dual': {
+        const du = b.dual || { enabled: false, source: 'chalk' as const, scale: 1.4, scatter: 0.3, hardness: 0.6 }
+        const setDual = (patch: Partial<typeof du>) => setB({ ...b, dual: { ...du, ...patch } })
+        return <>
+          <Switch label="Activar pincel doble" sub="Una segunda punta recorta la primera: bordes secos, granulados o rotos" on={du.enabled} onChange={(v) => setDual({ enabled: v })} />
+          <div className="label">Punta secundaria</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6, opacity: du.enabled ? 1 : 0.5 }}>
+            {TIP_SOURCES.filter(([k]) => k !== 'image').map(([k, n]) => (
+              <button key={k} className={'btn' + (du.source === k ? ' primary' : '')} style={{ height: 30, fontSize: 12, padding: '0 6px' }} onClick={() => setDual({ source: k, enabled: true })}>{n}</button>
+            ))}
+          </div>
+          <HSlider name="Escala" value={du.scale} min={0.3} max={4} onChange={(v) => setDual({ scale: v })} format={(v) => `${v.toFixed(2)}×`} />
+          <HSlider name="Dispersión" value={du.scatter} onChange={(v) => setDual({ scatter: v })} />
+          <HSlider name="Dureza" value={du.hardness} onChange={(v) => setDual({ hardness: v })} />
+        </>
+      }
       case 'about': return <>
         <div className="label">Nombre</div>
         <input className="field" value={b.name} onChange={(e) => setB({ ...b, name: e.target.value })} />

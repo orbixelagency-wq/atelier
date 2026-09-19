@@ -16,9 +16,10 @@ import { LayersPanel } from './panels/LayersPanel'
 import { TextPanel } from './panels/TextPanel'
 import { ReferenceWindow } from './ReferenceWindow'
 import { SideBar } from './SideBar'
-import { Timeline } from './Timeline'
+import { PageStrip, Timeline } from './Timeline'
 import { CropBar, GuidesPanel, SelectionBar, TransformBar } from './ToolBars'
 import { TopBar } from './TopBar'
+import { FashionDialogs, FashionMenu, MeasureBar, PatternPanel } from './panels/Fashion'
 
 function typing(e: KeyboardEvent) {
   const t = e.target as HTMLElement
@@ -99,12 +100,13 @@ export function Editor() {
   const uiHidden = useStore((s) => s.uiHidden)
   const right = useStore((s) => s.prefs.rightHanded)
   const anim = useStore((s) => s.anim.enabled)
+  const pagesOn = useStore((s) => s.pages.enabled)
   const refOpen = useStore((s) => s.referenceOpen)
   const cropping = useStore((s) => s.cropping)
   const toast = useStore((s) => s.toast)
   const studio = useStore((s) => s.studioBrushId)
 
-  const bottom = cropping ? <CropBar /> : panel === 'text' ? <TextPanel /> : panel === 'guides' ? <GuidesPanel /> : adjust ? <AdjustPanel /> : tool === 'select' ? <SelectionBar /> : tool === 'transform' ? <TransformBar /> : null
+  const bottom = cropping ? <CropBar /> : panel === 'text' ? <TextPanel /> : panel === 'guides' ? <GuidesPanel /> : panel === 'pattern' ? <PatternPanel /> : panel === 'measure' ? <MeasureBar /> : adjust ? <AdjustPanel /> : tool === 'select' ? <SelectionBar /> : tool === 'transform' ? <TransformBar /> : null
 
   return (
     <div className={'editor' + (uiHidden ? ' hidden-ui' : '') + (right ? ' right-handed' : '')}>
@@ -113,6 +115,7 @@ export function Editor() {
       <SideBar />
       {!uiHidden && bottom}
       {anim && !uiHidden && !bottom && <Timeline />}
+      {pagesOn && !uiHidden && !bottom && <PageStrip />}
       {refOpen && <ReferenceWindow />}
       {panel === 'brushes' && <BrushLibrary />}
       {panel === 'studio' && studio && <BrushStudio />}
@@ -120,6 +123,8 @@ export function Editor() {
       {panel === 'color' && <ColorPanel />}
       {panel === 'actions' && <ActionsPanel />}
       {panel === 'adjust' && <AdjustMenu />}
+      {panel === 'fashion' && <FashionMenu />}
+      <FashionDialogs />
       {toast && <div className="toast" key={toast.id} role="status">{toast.text}</div>}
     </div>
   )

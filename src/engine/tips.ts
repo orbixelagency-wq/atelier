@@ -200,6 +200,72 @@ function buildTip(source: TipSource, hardness: number): Canvas {
       x.arc(TIP / 2, TIP / 2, R - 6, 0, Math.PI * 2)
       x.stroke()
       break
+    // Textile tips are drawn along +x, the stroke direction (brushes use follow: 1).
+    case 'stitch':
+      x.beginPath()
+      x.roundRect(TIP * 0.14, TIP / 2 - 7, TIP * 0.52, 14, 7)
+      x.fill()
+      break
+    case 'dstitch':
+      x.beginPath()
+      x.roundRect(TIP * 0.14, TIP * 0.28 - 5, TIP * 0.5, 10, 5)
+      x.roundRect(TIP * 0.14, TIP * 0.72 - 5, TIP * 0.5, 10, 5)
+      x.fill()
+      break
+    case 'zigzag':
+      x.strokeStyle = '#fff'
+      x.lineWidth = 9
+      x.lineCap = 'round'
+      x.beginPath()
+      x.moveTo(8, TIP - 12)
+      x.lineTo(TIP / 2, 12)
+      x.lineTo(TIP - 8, TIP - 12)
+      x.stroke()
+      break
+    case 'zipper':
+      x.fillRect(TIP * 0.08, TIP * 0.14, TIP * 0.34, TIP * 0.3)
+      x.fillRect(TIP * 0.58, TIP * 0.56, TIP * 0.34, TIP * 0.3)
+      x.globalAlpha = 0.55
+      x.fillRect(0, TIP / 2 - 3, TIP, 6)
+      break
+    case 'rope':
+      x.beginPath()
+      x.ellipse(TIP / 2, TIP / 2, TIP * 0.42, TIP * 0.16, -Math.PI / 4, 0, Math.PI * 2)
+      x.fill()
+      x.globalCompositeOperation = 'destination-out'
+      x.lineWidth = 3
+      x.strokeStyle = '#fff'
+      x.beginPath()
+      x.moveTo(TIP * 0.3, TIP * 0.7)
+      x.lineTo(TIP * 0.7, TIP * 0.3)
+      x.stroke()
+      break
+    case 'overlock':
+      x.strokeStyle = '#fff'
+      x.lineWidth = 6
+      x.beginPath()
+      x.moveTo(10, TIP - 14)
+      x.bezierCurveTo(TIP * 0.2, 6, TIP * 0.8, 6, TIP - 10, TIP - 14)
+      x.moveTo(0, TIP - 14)
+      x.lineTo(TIP, TIP - 14)
+      x.stroke()
+      break
+    case 'satin':
+      x.strokeStyle = '#fff'
+      x.lineWidth = 7
+      x.beginPath()
+      x.moveTo(TIP * 0.35, 6)
+      x.lineTo(TIP * 0.65, TIP - 6)
+      x.stroke()
+      break
+    case 'rivet':
+      x.lineWidth = 14
+      x.strokeStyle = '#fff'
+      x.beginPath()
+      x.arc(TIP / 2, TIP / 2, R * 0.72, 0, Math.PI * 2)
+      x.stroke()
+      radial(x, R * 0.3, 0.8)
+      break
     default:
       radial(x, R, hardness)
   }
@@ -342,6 +408,49 @@ function buildGrain(src: GrainSource): Canvas {
       }
       break
     }
+    case 'twill': {
+      // denim: 2/1 diagonal twill with slubby yarn noise
+      const n = valueNoise(GRAIN, 64, rand)
+      for (let y = 0; y < GRAIN; y++) for (let i = 0; i < GRAIN; i++) {
+        const k = y * GRAIN + i
+        const d = Math.sin(((i + y * 2) / 4) * Math.PI)
+        v[k] = 0.5 + 0.35 * d + 0.3 * (n[k] - 0.5) + (rand() - 0.5) * 0.15
+      }
+      break
+    }
+    case 'knit': {
+      // jersey: columns of small V loops
+      const n = valueNoise(GRAIN, 128, rand)
+      for (let y = 0; y < GRAIN; y++) for (let i = 0; i < GRAIN; i++) {
+        const cx = (i % 8) - 3.5, cy = y % 8
+        const leg = Math.abs(Math.abs(cx) - cy * 0.45)
+        v[y * GRAIN + i] = Math.max(0, 1 - leg / 1.6) * 0.8 + n[y * GRAIN + i] * 0.2
+      }
+      break
+    }
+    case 'rib':
+      for (let y = 0; y < GRAIN; y++) for (let i = 0; i < GRAIN; i++) v[y * GRAIN + i] = Math.sin((i / 4) * Math.PI) ** 2 * 0.85 + rand() * 0.15
+      break
+    case 'corduroy': {
+      const n = valueNoise(GRAIN, 64, rand)
+      for (let y = 0; y < GRAIN; y++) for (let i = 0; i < GRAIN; i++) v[y * GRAIN + i] = Math.pow(Math.sin((i / 8) * Math.PI) ** 2, 0.6) * 0.75 + n[y * GRAIN + i] * 0.25
+      break
+    }
+    case 'leather': {
+      const a = valueNoise(GRAIN, 32, rand), b2 = valueNoise(GRAIN, 64, rand)
+      for (let i = 0; i < N; i++) v[i] = Math.min(1, Math.abs(a[i] - 0.5) * 6) * 0.7 + Math.min(1, Math.abs(b2[i] - 0.5) * 5) * 0.3
+      break
+    }
+    case 'fleece':
+      add(valueNoise(GRAIN, 128, rand), 0.5); add(valueNoise(GRAIN, 64, rand), 0.3)
+      for (let i = 0; i < N; i++) v[i] += rand() * 0.2
+      break
+    case 'mesh':
+      for (let y = 0; y < GRAIN; y++) for (let i = 0; i < GRAIN; i++) {
+        const cx = ((i + (Math.floor(y / 8) % 2) * 4) % 8) - 4, cy = (y % 8) - 4
+        v[y * GRAIN + i] = Math.min(1, Math.sqrt(cx * cx + cy * cy) / 2.6)
+      }
+      break
     case 'concrete':
       add(valueNoise(GRAIN, 128, rand), 0.5)
       for (let i = 0; i < N; i++) v[i] += rand() * 0.5
@@ -390,11 +499,14 @@ export function getGrainAlpha(src: GrainSource, depth: number): Canvas {
 export const GRAIN_SOURCES: [GrainSource, string][] = [
   ['none', 'Ninguno'], ['paper', 'Papel'], ['canvas', 'Lienzo'], ['noise', 'Ruido'], ['charcoal', 'Carbón'],
   ['watercolor', 'Acuarela'], ['halftone', 'Semitono'], ['wood', 'Madera'], ['concrete', 'Hormigón'],
+  ['twill', 'Denim'], ['knit', 'Punto'], ['rib', 'Canalé'], ['corduroy', 'Pana'], ['leather', 'Piel'], ['fleece', 'Polar'], ['mesh', 'Malla'],
 ]
 
 export const TIP_SOURCES: [TipSource, string][] = [
   ['round', 'Redonda'], ['soft', 'Difusa'], ['square', 'Cuadrada'], ['flat', 'Plana'], ['pencil', 'Lápiz'],
   ['charcoal', 'Carbón'], ['chalk', 'Tiza'], ['spray', 'Spray'], ['splatter', 'Salpicadura'], ['bristle', 'Cerdas'],
   ['dots', 'Puntos'], ['hatch', 'Tramado'], ['noise', 'Ruido'], ['drop', 'Gota'], ['ring', 'Anillo'],
-  ['leaf', 'Hoja'], ['star', 'Estrella'], ['sparkle', 'Destello'], ['cloud', 'Nube'], ['grass', 'Hierba'], ['image', 'Imagen'],
+  ['leaf', 'Hoja'], ['star', 'Estrella'], ['sparkle', 'Destello'], ['cloud', 'Nube'], ['grass', 'Hierba'],
+  ['stitch', 'Puntada'], ['dstitch', 'Puntada doble'], ['zigzag', 'Zigzag'], ['zipper', 'Cremallera'], ['rope', 'Cordón'],
+  ['overlock', 'Overlock'], ['satin', 'Satinado'], ['rivet', 'Remache'], ['image', 'Imagen'],
 ]

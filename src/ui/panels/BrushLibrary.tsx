@@ -28,7 +28,11 @@ export function BrushLibrary() {
   const current = useStore((s) => s.toolBrush[bt])
   const recent = useStore((s) => s.recentBrushes)
   const cur = brushes.find((b) => b.id === current)
-  const [cat, setCat] = useState<string>(cur?.category || CATEGORIES[0])
+  const [cat, setCat] = useState<string>(() => {
+    const req = get().libraryCategory
+    if (req) { set({ libraryCategory: null }); return req }
+    return cur?.category || CATEGORIES[0]
+  })
   const [ready, setReady] = useState(false)
   useEffect(() => { const id = requestAnimationFrame(() => setReady(true)); return () => cancelAnimationFrame(id) }, [])
 

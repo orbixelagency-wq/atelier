@@ -1,9 +1,9 @@
-import { Check, Copy, Download, Image as ImageIcon, Plus, Trash2, Upload } from 'lucide-react'
+import { ArrowLeft, Check, Copy, Download, Image as ImageIcon, Layers, Plus, Trash2, Upload } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { listArt, estimateUsage, renameArt, type ArtMeta } from '../engine/storage'
-import { downloadBlob, pickFile } from '../engine/util'
+import { listArt, estimateUsage, renameArt, updateArt, type ArtMeta } from '../engine/storage'
+import { downloadBlob, pickFile, uid } from '../engine/util'
 import { duplicateArt, exportArtPsd, importFileAsNew, newCanvas, openArt, removeArt } from '../state/session'
-import { toast, useStore } from '../state/store'
+import { get, set, toast, useStore } from '../state/store'
 import { Dialog, Seg } from './common'
 
 const PRESETS: { name: string; w: number; h: number; dpi: number }[] = [
@@ -81,12 +81,18 @@ export function Gallery() {
   const [creating, setCreating] = useState(false)
   const [renaming, setRenaming] = useState<string | null>(null)
   const [usage, setUsage] = useState('')
+  const [stackView, setStackView] = useState<string | null>(null)
+  const stacks = useStore((s) => s.stacks)
   const toastMsg = useStore((s) => s.toast)
 
   const load = async () => {
     try {
       const a = await listArt()
       setItems(a)
+      // forget stacks that no longer hold any artwork
+      const used = new Set(a.map((m) => m.stack).filter(Boolean))
+      const st = get().stacks
+      if (st.some((s) => !used.has(s.id))) set({ stacks: st.filter((s) => used.has(s.id)) })
       const u: Record<string, string> = {}
       for (const m of a) u[m.id] = URL.createObjectURL(m.thumb)
       setUrls((old) => { Object.values(old).forEach(URL.revokeObjectURL); return u })
@@ -103,6 +109,22 @@ export function Gallery() {
     if (files[0]) importFileAsNew(files[0])
   }
 
+  const stackIds = new Set(stacks.map((s) => s.id))
+  const inView = (items || []).filter((a) => (stackView ? a.stack === stackView : !a.stack || !stackIds.has(a.stack)))
+  const currentStack = stacks.find((s) => s.id === stackView)
+
+  const makeStack = async () => {
+    const st = { id: uid('stack'), name: `Pila ${stacks.length + 1}` }
+    set({ stacks: [...get().stacks, st] })
+    for (const id of sel) await updateArt(id, { stack: st.id })
+    setSel(new Set()); setSelecting(false); load()
+    toast('Pila creada · toca su nombre para renombrarla')
+  }
+  const unstack = async () => {
+    for (const id of sel) await updateArt(id, { stack: undefined })
+    setSel(new Set()); setSelecting(false); load()
+  }
+
   const toggle = (id: string) => {
     const n = new Set(sel)
     n.has(id) ? n.delete(id) : n.add(id)
@@ -112,7 +134,13 @@ export function Gallery() {
   return (
     <div className="gallery" onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); const f = e.dataTransfer.files?.[0]; if (f) importFileAsNew(f) }}>
       <header className="g-head">
-        <div className="wordmark">Atelier<i /></div>
+        {currentStack ? (
+          <div className="row" style={{ gap: 6 }}>
+            <button className="tb-btn" onClick={() => { setStackView(null); setSel(new Set()) }} aria-label="Volver a la galería"><ArrowLeft size={18} /> Galería</button>
+            <input className="field" style={{ width: 220, fontWeight: 650, fontSize: 17, background: 'transparent' }} value={currentStack.name} aria-label="Nombre de la pila"
+              onChange={(e) => set({ stacks: stacks.map((s) => (s.id === currentStack.id ? { ...s, name: e.target.value } : s)) })} />
+          </div>
+        ) : <div className="wordmark">Atelier<i /></div>}
         <div className="g-actions">
           {!!items?.length && <button className="tb-btn" onClick={() => { setSelecting(!selecting); setSel(new Set()) }}>{selecting ? 'Cancelar' : 'Seleccionar'}</button>}
           <button className="tb-btn" onClick={() => importFiles('image/*,.psd,.atelier')} title="Importar imagen, PSD o archivo .atelier"><Upload size={18} /><span className="lbl">Importar</span></button>
@@ -137,7 +165,25 @@ export function Gallery() {
 
       {!!items?.length && (
         <div className="g-grid">
-          {items.map((a) => (
+          {!stackView && stacks.map((st) => {
+            const members = (items || []).filter((a) => a.stack === st.id)
+            if (!members.length) return null
+            return (
+              <div key={st.id} className="art">
+                <button className="frame" onClick={() => { setStackView(st.id); setSel(new Set()) }} aria-label={`Abrir la pila ${st.name}`} style={{ position: 'relative' }}>
+                  {members.slice(0, 3).reverse().map((m, i, arr) => (
+                    <img key={m.id} src={urls[m.id]} alt="" draggable={false}
+                      style={{ position: i < arr.length - 1 ? 'absolute' : 'relative', transform: `translate(${(arr.length - 1 - i) * 10}px, ${-(arr.length - 1 - i) * 10}px) rotate(${(arr.length - 1 - i) * 2}deg)`, maxHeight: '88%', opacity: i < arr.length - 1 ? 0.85 : 1 }} />
+                  ))}
+                </button>
+                <div className="meta">
+                  <span className="name"><Layers size={13} style={{ verticalAlign: '-2px' }} /> {st.name}</span>
+                  <span className="dims num">{members.length} {members.length === 1 ? 'obra' : 'obras'}</span>
+                </div>
+              </div>
+            )
+          })}
+          {inView.map((a) => (
             <div key={a.id} className={'art' + (sel.has(a.id) ? ' selected' : '')}>
               <button className="frame" onClick={() => (selecting ? toggle(a.id) : openArt(a.id))} aria-label={`Abrir ${a.name}`}>
                 {urls[a.id] && <img src={urls[a.id]} alt="" draggable={false} />}
@@ -170,6 +216,7 @@ export function Gallery() {
           <span className="bb-btn num" style={{ pointerEvents: 'none' }}>{sel.size} seleccionadas</span>
           <button className="bb-btn" onClick={async () => { for (const id of sel) { const r = await exportArtPsd(id); if (r) downloadBlob(r.blob, `${r.name}.psd`) } }}><Download size={16} /> Compartir PSD</button>
           <button className="bb-btn" onClick={async () => { for (const id of sel) await duplicateArt(id); setSel(new Set()); load() }}><Copy size={16} /> Duplicar</button>
+          {stackView ? <button className="bb-btn" onClick={unstack}>Sacar de la pila</button> : <button className="bb-btn" onClick={makeStack}><Layers size={16} /> Apilar</button>}
           <button className="bb-btn" style={{ color: 'var(--danger)' }} onClick={async () => {
             if (!confirm(`¿Eliminar ${sel.size} obra(s)? Esta acción no se puede deshacer.`)) return
             for (const id of sel) await removeArt(id)

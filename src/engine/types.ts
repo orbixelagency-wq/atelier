@@ -4,13 +4,13 @@ export type BlendMode =
   | 'source-over' | 'multiply' | 'darken' | 'color-burn'
   | 'lighten' | 'screen' | 'color-dodge'
   | 'overlay' | 'soft-light' | 'hard-light'
-  | 'difference' | 'exclusion'
+  | 'difference' | 'exclusion' | 'lighter'
   | 'hue' | 'saturation' | 'color' | 'luminosity'
 
 export const BLEND_GROUPS: { label: string; modes: [BlendMode, string, string][] }[] = [
   { label: 'Normal', modes: [['source-over', 'Normal', 'N']] },
   { label: 'Oscurecer', modes: [['multiply', 'Multiplicar', 'M'], ['darken', 'Oscurecer', 'Os'], ['color-burn', 'Subexponer color', 'Sc']] },
-  { label: 'Aclarar', modes: [['lighten', 'Aclarar', 'Ac'], ['screen', 'Trama', 'T'], ['color-dodge', 'Sobreexponer color', 'Se']] },
+  { label: 'Aclarar', modes: [['lighten', 'Aclarar', 'Ac'], ['screen', 'Trama', 'T'], ['color-dodge', 'Sobreexponer color', 'Se'], ['lighter', 'Añadir', 'Añ']] },
   { label: 'Contraste', modes: [['overlay', 'Superponer', 'Su'], ['soft-light', 'Luz suave', 'Ls'], ['hard-light', 'Luz fuerte', 'Lf']] },
   { label: 'Diferencia', modes: [['difference', 'Diferencia', 'D'], ['exclusion', 'Exclusión', 'E']] },
   { label: 'Color', modes: [['hue', 'Tono', 'To'], ['saturation', 'Saturación', 'Sa'], ['color', 'Color', 'C'], ['luminosity', 'Luminosidad', 'L']] },
@@ -89,8 +89,10 @@ export interface DocSnapshot {
 export type TipSource =
   | 'round' | 'soft' | 'square' | 'flat' | 'pencil' | 'charcoal' | 'chalk' | 'spray' | 'splatter'
   | 'bristle' | 'leaf' | 'star' | 'cloud' | 'grass' | 'dots' | 'hatch' | 'noise' | 'drop' | 'ring' | 'sparkle' | 'image'
+  | 'stitch' | 'dstitch' | 'zigzag' | 'zipper' | 'rope' | 'overlock' | 'satin' | 'rivet'
 
 export type GrainSource = 'none' | 'paper' | 'canvas' | 'noise' | 'charcoal' | 'watercolor' | 'halftone' | 'wood' | 'concrete'
+  | 'twill' | 'knit' | 'rib' | 'corduroy' | 'leather' | 'fleece' | 'mesh'
 
 export interface Brush {
   id: string
@@ -136,6 +138,8 @@ export interface Brush {
     wetEdges: number
     glow?: number // 0-1: soft halo plus a hot, near-white core
   }
+  /** Dual brush: a second tip whose coverage masks the first. */
+  dual?: { enabled: boolean; source: TipSource; scale: number; scatter: number; hardness: number }
   wet: {
     dilution: number
     charge: number
@@ -173,5 +177,5 @@ export interface Brush {
 
 export interface Palette { id: string; name: string; colors: (string | null)[] }
 
-export type Tool = 'paint' | 'smudge' | 'erase' | 'select' | 'transform' | 'eyedropper' | 'liquify' | 'clone' | 'text' | 'crop' | 'guide' | 'filterPen'
+export type Tool = 'paint' | 'smudge' | 'erase' | 'select' | 'transform' | 'eyedropper' | 'liquify' | 'clone' | 'text' | 'crop' | 'guide' | 'filterPen' | 'measure'
 export type BrushTool = 'paint' | 'smudge' | 'erase'

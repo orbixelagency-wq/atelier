@@ -1,9 +1,11 @@
 import {
   Aperture, Blend, CircleDashed, Contrast, Droplets, Focus, Grid3x3, Layers2, Move, Palette, Rainbow, ScanLine,
-  Sparkles, Spline, Stamp, SunMedium, Waves, Zap,
+  Shirt, Sparkles, Spline, Stamp, SunMedium, Waves, Zap, MoveDiagonal,
 } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as F from '../../engine/filters'
+import { displace, offsetHalf, shadingFrom } from '../../engine/pattern'
+import { addLayer } from '../../state/docOps'
 import type { Canvas } from '../../engine/util'
 import { ctx2d } from '../../engine/util'
 import { active } from '../../state/docOps'
@@ -18,6 +20,7 @@ const MENU: { group: string; items: [AdjustKind, string, any][] }[] = [
   { group: 'Desenfoque', items: [['gaussian', 'Desenfoque gaussiano', CircleDashed], ['motion', 'Desenfoque de movimiento', Move], ['perspective', 'Desenfoque de perspectiva', Focus]] },
   { group: 'Efectos', items: [['noise', 'Ruido', Grid3x3], ['sharpen', 'Nitidez', Aperture], ['bloom', 'Resplandor', Sparkles], ['glitch', 'Fallo técnico', Zap], ['halftone', 'Semitono', Droplets], ['chromatic', 'Aberración cromática', Layers2]] },
   { group: 'Pintura', items: [['liquify', 'Licuar', Waves], ['clone', 'Clonar', Stamp]] },
+  { group: 'Moda', items: [['displace', 'Ajustar a tela (mockup)', Shirt], ['offset', 'Desplazar medio módulo', MoveDiagonal]] },
   { group: 'Otros', items: [['invert', 'Invertir', Palette], ['threshold', 'Umbral', ScanLine], ['posterize', 'Posterizar', Palette]] },
 ]
 
@@ -61,6 +64,8 @@ const DEFAULTS: Record<string, any> = {
   threshold: { level: 0.5 },
   posterize: { levels: 5 },
   levels: { black: 0, white: 1, gamma: 1 },
+  displace: { mapId: '', strength: 0.5, softness: 3, shade: true },
+  offset: { fx: 0.5, fy: 0.5 },
 }
 
 function run(kind: AdjustKind, src: Canvas, p: any): Canvas {
@@ -82,6 +87,11 @@ function run(kind: AdjustKind, src: Canvas, p: any): Canvas {
     case 'threshold': return F.threshold(src, p)
     case 'posterize': return F.posterize(src, p)
     case 'levels': return F.levels(src, p)
+    case 'displace': {
+      const map = get().doc?.layers.find((l) => l.id === p.mapId)
+      return map ? displace(src, map.canvas, p.strength * 6, p.softness) : src
+    }
+    case 'offset': return offsetHalf(src, p.fx, p.fy)
     default: return src
   }
 }
@@ -143,8 +153,20 @@ function CurveEditor({ pts, onChange }: { pts: CurvePts; onChange: (p: CurvePts)
 }
 
 function FilterPanel({ kind }: { kind: AdjustKind }) {
-  const [p, setP] = useState<any>(() => JSON.parse(JSON.stringify(DEFAULTS[kind])))
   const layer = useMemo(() => active(), [kind])
+  const [p, setP] = useState<any>(() => {
+    const d = JSON.parse(JSON.stringify(DEFAULTS[kind]))
+    if (kind === 'displace') {
+      // default map: the nearest visible raster layer below (usually the garment photo)
+      const doc = get().doc!
+      const i = doc.layers.findIndex((l) => l.id === layer?.id)
+      const below = doc.layers.slice(0, Math.max(0, i)).reverse().find((l) => l.kind !== 'group' && l.visible)
+      d.mapId = below?.id || ''
+    }
+    return d
+  })
+  const [pencil, setPencil] = useState(false)
+  const pencilAllowed = kind !== 'offset' && kind !== 'displace'
   const timer = useRef(0)
   const result = useRef<Canvas | null>(null)
   const selection = useStore((s) => s.selection)
@@ -158,15 +180,24 @@ function FilterPanel({ kind }: { kind: AdjustKind }) {
       const src = layer.canvas
       const filtered = run(kind, src, p)
       result.current = F.withinSelection(src, filtered, selection)
-      editor.setFilterPreview(layer.id, result.current)
+      if (pencil) {
+        if (editor.filterPaint) editor.setFilterPaintFiltered(result.current)
+        else editor.startFilterPaint(layer.id, src, result.current)
+      } else editor.setFilterPreview(layer.id, result.current)
     }, heavy ? 90 : 25)
-  }, [p, kind, selection])
+  }, [p, kind, selection, pencil])
+
+  useEffect(() => {
+    if (!pencil && editor.filterPaint) editor.stopFilterPaint()
+    return () => { if (editor.filterPaint) editor.stopFilterPaint() }
+  }, [pencil])
 
   const apply = () => {
     clearTimeout(timer.current)
     const L = active()
     if (L && layer && L.id === layer.id) {
-      const out = result.current || F.withinSelection(layer.canvas, run(kind, layer.canvas, p), selection)
+      const painted = pencil ? editor.stopFilterPaint() : null
+      const out = painted || result.current || F.withinSelection(layer.canvas, run(kind, layer.canvas, p), selection)
       editPixels(ADJUST_NAMES[kind], L, (cv) => {
         const x = ctx2d(cv)
         x.clearRect(0, 0, cv.width, cv.height)
@@ -175,8 +206,12 @@ function FilterPanel({ kind }: { kind: AdjustKind }) {
     }
     editor.setFilterPreview('', null)
     set({ adjust: null })
+    if (kind === 'displace' && p.shade && L && L.id === layer?.id) {
+      const map = get().doc?.layers.find((l) => l.id === p.mapId)
+      if (map) addLayer(shadingFrom(map.canvas), 'Sombras de la tela', { clip: true, blend: 'multiply' })
+    }
   }
-  const cancel = () => { clearTimeout(timer.current); editor.setFilterPreview('', null); set({ adjust: null }) }
+  const cancel = () => { clearTimeout(timer.current); editor.stopFilterPaint(); editor.setFilterPreview('', null); set({ adjust: null }) }
   useEffect(() => {
     registerAdjust({ apply, cancel })
     return () => registerAdjust(null)
@@ -247,6 +282,26 @@ function FilterPanel({ kind }: { kind: AdjustKind }) {
     case 'threshold': body = S('Nivel', 'level'); break
     case 'posterize': body = S('Niveles', 'levels', 2, 16, (v) => `${Math.round(v)}`); break
     case 'levels': body = <>{S('Negro', 'black')}{S('Blanco', 'white')}{S('Gamma', 'gamma', 0.2, 3, (v) => v.toFixed(2))}</>; break
+    case 'displace': {
+      const doc = get().doc!
+      body = <>
+        <span className="label" style={{ fontWeight: 500 }}>Coloca el diseño sobre la foto de la prenda. La foto guía los pliegues y, al aplicar, se añade una capa de sombras recortada al diseño.</span>
+        <label className="row" style={{ justifyContent: 'space-between' }}>
+          <span className="name" style={{ fontSize: 13, color: 'var(--ink-2)' }}>Foto de la tela</span>
+          <select className="field" style={{ width: 'auto', maxWidth: 240 }} value={p.mapId} onChange={(e) => up({ mapId: e.target.value })}>
+            <option value="">Elige una capa…</option>
+            {doc.layers.filter((l) => l.kind !== 'group' && l.id !== layer.id).slice().reverse().map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+          </select>
+        </label>
+        {S('Intensidad', 'strength')}{S('Suavizado', 'softness', 0, 12, (v) => `${v.toFixed(1)} px`)}
+        <Seg value={p.shade ? 'on' : 'off'} onChange={(v) => up({ shade: v === 'on' })} options={[['on', 'Añadir sombras de la tela'], ['off', 'Solo deformar']]} />
+      </>
+      break
+    }
+    case 'offset': body = <>
+      <span className="label" style={{ fontWeight: 500 }}>Desplaza la capa con envoltura para ver y repasar las juntas del módulo del estampado.</span>
+      {S('Horizontal', 'fx')}{S('Vertical', 'fy')}
+    </>; break
   }
 
   return (
@@ -259,6 +314,12 @@ function FilterPanel({ kind }: { kind: AdjustKind }) {
           <button className="btn primary" onClick={apply}>Aplicar</button>
         </div>
       </div>
+      {pencilAllowed && (
+        <div className="row" style={{ justifyContent: 'space-between' }}>
+          <Seg value={pencil ? 'pen' : 'layer'} onChange={(v) => setPencil(v === 'pen')} options={[['layer', 'Capa'], ['pen', 'Pincel']]} />
+          {pencil && <span className="label" style={{ fontWeight: 500 }}>Pinta sobre el lienzo para aplicar el ajuste; con Borrar lo quitas.</span>}
+        </div>
+      )}
       {body}
     </div>
   )

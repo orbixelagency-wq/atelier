@@ -1,4 +1,4 @@
-import { Brush, Eraser, Layers, MousePointer2, Pointer, SquareDashed, Wand2, Wrench } from 'lucide-react'
+import { Brush, Eraser, Layers, MousePointer2, Pointer, Shirt, SquareDashed, Wand2, Wrench } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { hsvToHex } from '../engine/util'
 import { editor } from '../state/editor'
@@ -47,6 +47,8 @@ export function TopBar() {
         <button className={'tb-btn' + (panel === 'adjust' || (adjust && adjust !== 'clone') ? ' on' : '')} data-anchor="adjust" onClick={() => togglePanel('adjust')} title="Ajustes" aria-label="Ajustes"><Wand2 size={19} /></button>
         <button className={'tb-btn' + on('select')} onClick={() => selectTool('select')} title="Selección (S)" aria-label="Selección"><SquareDashed size={19} /></button>
         <button className={'tb-btn' + on('transform')} onClick={() => selectTool('transform')} title="Transformar (V)" aria-label="Transformar"><MousePointer2 size={19} /></button>
+        <span className="tb-sep" />
+        <button className={'tb-btn' + (panel === 'fashion' || panel === 'pattern' || panel === 'measure' ? ' on' : '')} data-anchor="fashion" onClick={() => togglePanel('fashion')} title="Moda: prendas, estampados, colorways, medidas y fichas técnicas" aria-label="Moda"><Shirt size={19} /><span className="lbl">Moda</span></button>
       </div>
       <div className="tb-group">
         <button className={'tb-btn' + on('paint') + (adjust === 'clone' ? ' on' : '')} data-anchor="paint" onClick={() => selectTool('paint')} title="Pintar (B)" aria-label="Pintar"><Brush size={19} /></button>

@@ -65,11 +65,10 @@ export async function deserializeDoc(blob: Blob): Promise<Doc> {
 const toPsdBlend: Record<BlendMode, string> = {
   'source-over': 'normal', multiply: 'multiply', darken: 'darken', 'color-burn': 'color burn', lighten: 'lighten', screen: 'screen',
   'color-dodge': 'color dodge', overlay: 'overlay', 'soft-light': 'soft light', 'hard-light': 'hard light', difference: 'difference',
-  exclusion: 'exclusion', hue: 'hue', saturation: 'saturation', color: 'color', luminosity: 'luminosity',
+  exclusion: 'exclusion', hue: 'hue', saturation: 'saturation', color: 'color', luminosity: 'luminosity', lighter: 'linear dodge',
 }
 const fromPsdBlend = (m?: string): BlendMode => {
   for (const [k, v] of Object.entries(toPsdBlend)) if (v === m) return k as BlendMode
-  if (m === 'linear dodge') return 'color-dodge'
   if (m === 'linear burn') return 'color-burn'
   return 'source-over'
 }

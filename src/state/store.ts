@@ -4,13 +4,13 @@ import { DEFAULT_BRUSHES, DEFAULT_TOOL_BRUSH } from '../engine/brushes'
 import type { HSV } from '../engine/util'
 import type { Canvas } from '../engine/util'
 
-export type Panel = null | 'brushes' | 'layers' | 'color' | 'actions' | 'adjust' | 'studio' | 'text' | 'guides'
+export type Panel = null | 'brushes' | 'layers' | 'color' | 'actions' | 'adjust' | 'studio' | 'text' | 'guides' | 'fashion' | 'pattern' | 'measure'
 export type SelectMode = 'auto' | 'free' | 'rect' | 'ellipse'
 export type SelectOp = 'replace' | 'add' | 'subtract'
 export type TransformMode = 'free' | 'uniform' | 'distort' | 'warp'
 export type AdjustKind =
   | 'hsb' | 'balance' | 'curves' | 'gradientMap' | 'gaussian' | 'motion' | 'perspective' | 'sharpen' | 'noise'
-  | 'liquify' | 'clone' | 'bloom' | 'glitch' | 'halftone' | 'chromatic' | 'invert' | 'threshold' | 'posterize' | 'levels'
+  | 'liquify' | 'clone' | 'displace' | 'offset' | 'bloom' | 'glitch' | 'halftone' | 'chromatic' | 'invert' | 'threshold' | 'posterize' | 'levels'
 
 export interface View { zoom: number; rot: number; tx: number; ty: number; flip: boolean }
 
@@ -40,6 +40,10 @@ export interface AnimSettings {
   fgFrame: boolean
   playing: boolean
 }
+
+export interface Colorway { id: string; name: string; pairs: { from: string; to: string }[] }
+
+export interface MeasureSettings { unit: 'cm' | 'in'; pxPerCm: number | null; color: string; calibrating: boolean }
 
 export interface Prefs {
   light: boolean
@@ -106,6 +110,13 @@ export interface State {
   liquifyMode: 'push' | 'twirlR' | 'twirlL' | 'pinch' | 'expand' | 'crystals' | 'edge' | 'reconstruct'
   liquify: { size: number; pressure: number; distortion: number; momentum: number }
   timelapse: boolean
+  tileMode: boolean
+  pages: { enabled: boolean; page: number }
+  measure: MeasureSettings
+  colorways: Colorway[]
+  stacks: { id: string; name: string }[]
+  fashionDialog: null | 'garment' | 'colorway' | 'techpack'
+  libraryCategory: string | null
 }
 
 const LS = 'atelier:'
@@ -210,6 +221,13 @@ export const useStore = create<State>(() => ({
   liquifyMode: 'push',
   liquify: { size: 0.3, pressure: 0.6, distortion: 0.5, momentum: 0 },
   timelapse: true,
+  tileMode: false,
+  pages: { enabled: false, page: 0 },
+  measure: { unit: 'cm', pxPerCm: null, color: '#e0443e', calibrating: false },
+  colorways: loadArr<Colorway>('colorways', []),
+  stacks: loadArr<{ id: string; name: string }>('stacks', []),
+  fashionDialog: null,
+  libraryCategory: null,
 }))
 
 export const get = useStore.getState
@@ -233,5 +251,7 @@ useStore.subscribe((s, p) => {
   if (s.color !== p.color) save('color', s.color)
   if (s.recentBrushes !== p.recentBrushes) save('recentBrushes', s.recentBrushes)
   if (s.guides !== p.guides) save('guides', { ...s.guides, vps: [], center: null })
+  if (s.colorways !== p.colorways) save('colorways', s.colorways)
+  if (s.stacks !== p.stacks) save('stacks', s.stacks)
   if (s.brushes !== p.brushes) save('customBrushes', s.brushes.filter((b) => b.custom))
 })

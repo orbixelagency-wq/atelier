@@ -25,7 +25,7 @@ export function makeBrush(category: string, name: string, o: DeepPartial<Brush> 
   b.id = (category + '-' + name).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-')
   for (const k of Object.keys(o) as (keyof Brush)[]) {
     const v = o[k] as any
-    if (v && typeof v === 'object' && !Array.isArray(v)) Object.assign((b as any)[k], v)
+    if (v && typeof v === 'object' && !Array.isArray(v)) (b as any)[k] = { ...((b as any)[k] || {}), ...v }
     else (b as any)[k] = v
   }
   return b
@@ -37,6 +37,7 @@ const C = {
   sketch: 'Bocetos', ink: 'Entintado', draw: 'Dibujo', paint: 'Pintura', art: 'Artístico', calli: 'Caligrafía',
   air: 'Aerógrafo', tex: 'Texturas', abs: 'Abstracto', char: 'Carboncillo', elem: 'Elementos', spray: 'Aerosoles',
   touch: 'Retoques', retro: 'Retro', lum: 'Luminancia', ind: 'Industrial', org: 'Orgánico', water: 'Agua',
+  sew: 'Costura y textil',
 }
 
 export const CATEGORIES = Object.values(C)
@@ -162,6 +163,29 @@ export const DEFAULT_BRUSHES: Brush[] = [
   makeBrush(C.water, 'Gota de tinta', { shape: { source: 'drop', hardness: 0.9 }, stroke: { spacing: 0.8 }, render: { flow: 0.5, blend: 'multiply' }, dynamics: { sizeJitter: 0.4 }, props: { maxSize: 140 } }),
   makeBrush(C.water, 'Sal', { shape: { source: 'spray', hardness: 0.5, rotJitter: 1 }, stroke: { spacing: 0.3 }, render: { blend: 'screen', flow: 0.6 }, props: { maxSize: 120 } }),
 ]
+
+DEFAULT_BRUSHES.push(
+  // Costura y textil: seams, trims and fabric surfaces for garment flats and mockups
+  makeBrush(C.sew, 'Pespunte', { shape: { source: 'stitch', hardness: 1, follow: 1 }, stroke: { spacing: 1.15, streamline: 0.6 }, taper: { start: 0, end: 0 }, pencil: { pressureSize: 0 }, props: { maxSize: 14 } }),
+  makeBrush(C.sew, 'Doble pespunte', { shape: { source: 'dstitch', hardness: 1, follow: 1 }, stroke: { spacing: 1.15, streamline: 0.6 }, taper: { start: 0, end: 0 }, pencil: { pressureSize: 0 }, props: { maxSize: 22 } }),
+  makeBrush(C.sew, 'Zigzag', { shape: { source: 'zigzag', hardness: 1, follow: 1 }, stroke: { spacing: 0.95, streamline: 0.6 }, taper: { start: 0, end: 0 }, pencil: { pressureSize: 0 }, props: { maxSize: 18 } }),
+  makeBrush(C.sew, 'Overlock', { shape: { source: 'overlock', hardness: 1, follow: 1 }, stroke: { spacing: 0.5, streamline: 0.6 }, taper: { start: 0, end: 0 }, pencil: { pressureSize: 0 }, props: { maxSize: 20 } }),
+  makeBrush(C.sew, 'Cremallera', { shape: { source: 'zipper', hardness: 1, follow: 1 }, stroke: { spacing: 0.55, streamline: 0.7 }, taper: { start: 0, end: 0 }, pencil: { pressureSize: 0 }, props: { maxSize: 30 } }),
+  makeBrush(C.sew, 'Cordón', { shape: { source: 'rope', hardness: 1, follow: 1 }, stroke: { spacing: 0.3, streamline: 0.6 }, taper: { start: 0, end: 0 }, pencil: { pressureSize: 0 }, props: { maxSize: 26 } }),
+  makeBrush(C.sew, 'Bordado satinado', { shape: { source: 'satin', hardness: 1, follow: 1 }, stroke: { spacing: 0.12, streamline: 0.5 }, taper: { start: 0.05, end: 0.05, size: 0.5 }, pencil: { pressureSize: 0.4 }, color: { bright: 0.04 }, props: { maxSize: 40 } }),
+  makeBrush(C.sew, 'Remaches', { shape: { source: 'rivet', hardness: 1 }, stroke: { spacing: 2.6, streamline: 0.6 }, taper: { start: 0, end: 0 }, pencil: { pressureSize: 0 }, props: { maxSize: 24 } }),
+  makeBrush(C.sew, 'Denim', { shape: { source: 'soft', hardness: 0.7 }, grain: { source: 'twill', depth: 0.75, scale: 0.8 }, stroke: { spacing: 0.08 }, taper: { start: 0, end: 0 }, pencil: { pressureSize: 0.1 }, props: { maxSize: 260 } }),
+  makeBrush(C.sew, 'Punto jersey', { shape: { source: 'soft', hardness: 0.7 }, grain: { source: 'knit', depth: 0.6, scale: 0.7 }, stroke: { spacing: 0.08 }, taper: { start: 0, end: 0 }, pencil: { pressureSize: 0.1 }, props: { maxSize: 260 } }),
+  makeBrush(C.sew, 'Canalé', { shape: { source: 'soft', hardness: 0.75 }, grain: { source: 'rib', depth: 0.7, scale: 0.8 }, stroke: { spacing: 0.08 }, taper: { start: 0, end: 0 }, pencil: { pressureSize: 0.1 }, props: { maxSize: 200 } }),
+  makeBrush(C.sew, 'Pana', { shape: { source: 'soft', hardness: 0.7 }, grain: { source: 'corduroy', depth: 0.75, scale: 1 }, stroke: { spacing: 0.08 }, taper: { start: 0, end: 0 }, pencil: { pressureSize: 0.1 }, props: { maxSize: 260 } }),
+  makeBrush(C.sew, 'Piel', { shape: { source: 'soft', hardness: 0.7 }, grain: { source: 'leather', depth: 0.55, scale: 1.2 }, stroke: { spacing: 0.08 }, taper: { start: 0, end: 0 }, pencil: { pressureSize: 0.1 }, props: { maxSize: 260 } }),
+  makeBrush(C.sew, 'Forro polar', { shape: { source: 'soft', hardness: 0.5 }, grain: { source: 'fleece', depth: 0.6, scale: 1 }, stroke: { spacing: 0.08 }, taper: { start: 0, end: 0 }, pencil: { pressureSize: 0.1 }, props: { maxSize: 260 } }),
+  makeBrush(C.sew, 'Malla deportiva', { shape: { source: 'soft', hardness: 0.75 }, grain: { source: 'mesh', depth: 0.85, scale: 0.8 }, stroke: { spacing: 0.08 }, taper: { start: 0, end: 0 }, pencil: { pressureSize: 0.1 }, props: { maxSize: 260 } }),
+  makeBrush(C.sew, 'Arrugas de tela', { shape: { source: 'soft', hardness: 0.2 }, stroke: { spacing: 0.05, streamline: 0.3 }, taper: { start: 0.3, end: 0.4, size: 0.9 }, render: { flow: 0.18, blend: 'multiply' }, pencil: { pressureSize: 0.7, pressureOpacity: 0.6 }, props: { maxSize: 90 } }),
+  // dual-tip brushes
+  makeBrush(C.char, 'Carbón doble', { shape: { source: 'charcoal', hardness: 0.6, rotJitter: 1 }, dual: { enabled: true, source: 'chalk', scale: 1.6, scatter: 0.3, hardness: 0.6 }, stroke: { spacing: 0.05 }, pencil: { pressureOpacity: 0.7, pressureSize: 0.3 }, props: { maxSize: 44 } }),
+  makeBrush(C.water, 'Acuarela granulada', { shape: { source: 'soft', hardness: 0.4 }, dual: { enabled: true, source: 'spray', scale: 1.4, scatter: 0.4, hardness: 0.5 }, grain: { source: 'watercolor', depth: 0.3 }, render: { flow: 0.35, blend: 'multiply' }, stroke: { spacing: 0.06 }, props: { maxSize: 140 } }),
+)
 
 export const DEFAULT_TOOL_BRUSH = {
   paint: 'entintado-pluma-de-estudio',

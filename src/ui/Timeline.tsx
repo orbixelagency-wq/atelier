@@ -12,6 +12,35 @@ function FrameThumb({ l, v }: { l: Layer; v: number }) {
   return <div className="thumb">{url && <img src={url} alt="" draggable={false} />}</div>
 }
 
+export function PageStrip() {
+  const doc = useStore((s) => s.doc)!
+  const pages = useStore((s) => s.pages)
+  const v = useStore((s) => s.docVersion)
+  useStore((s) => s.layersVersion)
+  const list = frameLayers(doc)
+  const cur = Math.min(pages.page, list.length - 1)
+  const go = (i: number) => { set({ pages: { ...pages, page: i } }); const f = list[i]; if (f) selectLayer(f.id) }
+  return (
+    <div className="timeline" onPointerDown={(e) => e.stopPropagation()}>
+      <div className="row" style={{ justifyContent: 'space-between' }}>
+        <span className="label">Asistente de página · página {cur + 1} de {list.length}</span>
+        <div className="row" style={{ gap: 4 }}>
+          <button className="btn ghost" onClick={() => { const f = list[cur]; if (f) { duplicateLayer(f.id); set({ pages: { ...pages, page: cur + 1 } }) } }}>Duplicar página</button>
+          <button className="btn" onClick={() => { const f = list[list.length - 1]; if (f) selectLayer(f.id); addLayer(undefined, `Página ${list.length + 1}`); set({ pages: { ...pages, page: list.length } }) }}><Plus size={16} /> Añadir página</button>
+        </div>
+      </div>
+      <div className="frames">
+        {list.map((f, i) => (
+          <button key={f.id} className={'frame-cell' + (i === cur ? ' on' : '')} onClick={() => go(i)}>
+            <FrameThumb l={f} v={v} />
+            <span className="num">{i + 1}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export function Timeline() {
   const doc = useStore((s) => s.doc)!
   const anim = useStore((s) => s.anim)

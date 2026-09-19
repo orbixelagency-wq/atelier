@@ -2,7 +2,7 @@
 
 Inventario de lo que contiene Procreate (versión 5.x/6 para iPad) agrupado por áreas, y cómo lo cubre Atelier (web, navegador, PC + tablet con lápiz).
 
-Leyenda: ✅ incluido en Atelier · 🟡 incluido en versión simplificada · ⏳ pendiente
+Leyenda: ✅ incluido en Atelier · 🟡 incluido en versión simplificada · ❌ no incluido
 
 ---
 
@@ -13,7 +13,7 @@ Leyenda: ✅ incluido en Atelier · 🟡 incluido en versión simplificada · �
 | Nuevo lienzo: tamaños predefinidos (pantalla, cuadrado, 4K, A4, carta…) y personalizado (ancho, alto, DPI, perfil de color) | ✅ presets + personalizado con px/DPI |
 | Importar imagen / foto | ✅ PNG, JPG, WebP, GIF, PSD (con capas) |
 | Seleccionar, duplicar, borrar, compartir, renombrar | ✅ |
-| Pilas (carpetas) | ⏳ |
+| Pilas (carpetas) | ✅ selecciona obras → Apilar; renombrar y sacar de la pila |
 | Vista previa a pantalla completa | ✅ |
 
 ## 2. Interfaz del lienzo
@@ -48,7 +48,7 @@ Leyenda: ✅ incluido en Atelier · 🟡 incluido en versión simplificada · �
 | Dinámica: velocidad → tamaño/opacidad, jitter | ✅ |
 | Apple Pencil: presión → tamaño/opacidad/flujo, inclinación | ✅ vía Pointer Events (Wacom, Huion, Apple Pencil en Safari, S-Pen) |
 | Propiedades: tamaño máx/mín, opacidad máx/mín, orientación | ✅ |
-| Pincel dual (combinar dos) | ⏳ |
+| Pincel dual (combinar dos) | ✅ punta secundaria que recorta la primera (Brush Studio → Pincel doble) |
 | Pad de pruebas en vivo | ✅ |
 
 ## 5. Herramientas de pintura
@@ -65,7 +65,7 @@ Leyenda: ✅ incluido en Atelier · 🟡 incluido en versión simplificada · �
 | Procreate | Atelier |
 |---|---|
 | Añadir, borrar, duplicar, bloquear, ocultar, reordenar arrastrando | ✅ |
-| 27 modos de fusión | ✅ 16 modos (los que soporta el navegador: normal, multiplicar, oscurecer, subexponer color, aclarar, trama, sobreexponer, superponer, luz suave, luz fuerte, diferencia, exclusión, tono, saturación, color, luminosidad) |
+| 27 modos de fusión | ✅ 17 modos (añadir/sobreexponer lineal incluido; los que soporta el navegador: normal, multiplicar, oscurecer, subexponer color, aclarar, trama, sobreexponer, superponer, luz suave, luz fuerte, diferencia, exclusión, tono, saturación, color, luminosidad) |
 | Opacidad por capa | ✅ |
 | Bloqueo alfa | ✅ |
 | Máscara de recorte | ✅ |
@@ -89,7 +89,7 @@ Leyenda: ✅ incluido en Atelier · 🟡 incluido en versión simplificada · �
 | Licuar (empujar, girar, pellizcar, expandir, cristales, reconstruir) | ✅ |
 | Clonar | ✅ |
 | Resplandor (bloom), fallo técnico (glitch), semitono, aberración cromática | ✅ |
-| Modo capa o modo Pencil (aplicar con pincel) | 🟡 modo capa |
+| Modo capa o modo Pencil (aplicar con pincel) | ✅ Capa / Pincel en cada ajuste |
 
 ## 8. Selección
 | Procreate | Atelier |
@@ -117,13 +117,13 @@ Leyenda: ✅ incluido en Atelier · 🟡 incluido en versión simplificada · �
 |---|---|
 | Añadir: insertar archivo/foto, texto, cortar/copiar/pegar | ✅ |
 | Lienzo: recortar y cambiar tamaño, voltear, información del lienzo, guía de dibujo, referencia | ✅ |
-| Compartir: .procreate, PSD, PDF, JPEG, PNG, TIFF, GIF/PNG/MP4 animado, capas como PNG | ✅ .atelier, PSD, PNG, JPG, WebP, GIF animado, capas PNG · ⏳ PDF/TIFF |
+| Compartir: .procreate, PSD, PDF, JPEG, PNG, TIFF, GIF/PNG/MP4 animado, capas como PNG | ✅ .atelier, PSD, PDF, PNG, JPG, WebP, TIFF, GIF animado, vídeo WebM, capas PNG · ❌ .procreate |
 | Vídeo: timelapse, grabar, exportar | ✅ repetición y exportación WebM |
 | Preferencias: interfaz clara/oscura, zurdos, contorno del pincel, curva de presión, gestos | ✅ |
 | Guía de dibujo: cuadrícula 2D, isométrica, perspectiva (1/2/3 puntos), simetría (vertical, horizontal, cuadrante, radial) | ✅ |
 | Asistente de animación: fotogramas, piel de cebolla, FPS, bucle/ping-pong/una vez, retener fotograma | ✅ |
-| Asistente de página (cómics/libros) | ⏳ |
-| Pintura 3D | ⏳ |
+| Asistente de página (cómics/libros) | ✅ cada capa o grupo es una página; exporta PDF multipágina |
+| Pintura 3D | ❌ fuera de alcance en esta versión |
 
 ## 12. Texto
 | Procreate | Atelier |
@@ -145,3 +145,25 @@ Leyenda: ✅ incluido en Atelier · 🟡 incluido en versión simplificada · �
 - Soporta ratón, tableta gráfica y pantalla táctil.
 - Todo se guarda en el dispositivo; nada se sube a ningún servidor.
 - Abre y exporta PSD con capas para trabajar con Photoshop.
+
+---
+
+## Qué falta frente a Procreate (honestamente)
+- **Importar archivos `.procreate`**: formato propietario sin documentación pública. Alternativa: exportar desde Procreate como PSD e importarlo en Atelier (conserva las capas).
+- **Pintura 3D** sobre modelos (OBJ/USDZ).
+- **27 modos de fusión**: el navegador ofrece 17; faltan los "lineales/vívidos" (subexponer lineal, luz vívida, luz lineal, luz focal, mezcla definida, restar, dividir, color más oscuro/claro).
+- **Perfiles de color CMYK / P3** para impresión: Atelier trabaja en sRGB (la ficha técnica da CMYK aproximado).
+- **Modo de renderizado "aguada"** del pincel se comporta como glaseado.
+
+## Módulo Moda (exclusivo de Atelier)
+| Herramienta | Qué hace |
+|---|---|
+| Plantillas de prendas | 9 planos técnicos (camiseta, manga larga, sudadera, hoodie, bomber, jogger, pantalón corto, gorra, tote), delantero y espalda, a la resolución del lienzo. Se crean como grupo: *Color base* + *Estampado y detalles* (recortado a la prenda) + *Líneas* (capa de referencia para ColorDrop). |
+| Pinceles de costura y textil | 16 pinceles: pespunte, doble pespunte, zigzag, overlock, cremallera, cordón, bordado satinado, remaches, denim, punto jersey, canalé, pana, piel, forro polar, malla deportiva y arrugas de tela. |
+| Modo repetición | Pinta el módulo de un estampado: los trazos continúan por el borde opuesto y se ve la repetición alrededor. |
+| Desplazar medio módulo | Lleva las juntas al centro para repasarlas. |
+| Rellenar con estampado | Biblioteca de estampados (desde capa, lienzo o imagen) y relleno en cuadrícula, media gota, ladrillo o espejo con escala, rotación, separación y desplazamiento; queda recortado a la prenda. |
+| Colorways | Detecta los colores de la prenda, los sustituye conservando sombras y textura, guarda variantes y genera un tablero comparativo con HEX. |
+| Medidas | Cotas técnicas en cm o pulgadas según los ppp o calibradas con una medida real. |
+| Ajustar a tela (mockup) | Deforma un diseño según los pliegues de una foto de prenda y añade una capa de sombras de la tela. |
+| Ficha técnica | Tech pack en PDF (A4 apaisado, 2 páginas): plano, colores con HEX/CMYK, tejido, composición, gramaje, fornituras, tabla de medidas por talla y notas de confección. |

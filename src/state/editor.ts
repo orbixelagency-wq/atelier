@@ -6,13 +6,15 @@ import { dilate, floodMask, maskToCanvas } from '../engine/fill'
 import { assistFn, drawGuides, guideCenter, symmetryFn } from '../engine/guides'
 import { Liquify } from '../engine/liquify'
 import { detectShape, SHAPE_NAMES } from '../engine/quickshape'
+import { drawDimension, formatLength } from '../engine/measure'
 import { autoMask, combine, ellipseMask, polyMask, rectMask, selectionOverlay } from '../engine/selection'
 import { applyH, bezierPatch, drawMesh, gridFromQuad, squareToQuad, type P } from '../engine/transform'
 import type { BrushTool, Layer } from '../engine/types'
 import {
   BBox, checkerPattern, clamp, cloneCanvas, contentBounds, ctx2d, hexToHsv, hsvToHex, makeCanvas, rgbToHex, type Canvas,
 } from '../engine/util'
-import { active, hsvHex } from './docOps'
+import { active, hsvHex, newLayer } from './docOps'
+import type { SymmetryFn } from '../engine/brushEngine'
 import { beginPixels, beforePixels, cancelPixels, commit, endPixels, redo, setSelection, targetCanvas, undo } from './history'
 import { get, set, toast, type View } from './store'
 
@@ -213,7 +215,7 @@ class Editor {
       compositeDoc(d, this.composite, {
         live: this.live,
         float: this.floatLayer(),
-        anim: s.anim.enabled ? { frame: s.anim.frame, onionBefore: s.anim.onion, onionAfter: s.anim.onion, onionOpacity: s.anim.onionOpacity, bgFrame: s.anim.bgFrame, fgFrame: s.anim.fgFrame, playing: s.anim.playing } : null,
+        anim: s.pages.enabled ? { frame: s.pages.page, onionBefore: 0, onionAfter: 0, onionOpacity: 0, bgFrame: false, fgFrame: false, playing: true } : s.anim.enabled ? { frame: s.anim.frame, onionBefore: s.anim.onion, onionAfter: s.anim.onion, onionOpacity: s.anim.onionOpacity, bgFrame: s.anim.bgFrame, fgFrame: s.anim.fgFrame, playing: s.anim.playing } : null,
         layerOverride: this.liquify && this.liqLayer ? { id: this.liqLayer, canvas: this.liquify.out } : this.filterPreview ? { id: this.filterPreview.layerId, canvas: this.filterPreview.canvas } : null,
       })
       this.needsComposite = false
@@ -285,7 +287,25 @@ class Editor {
     }
     x.imageSmoothingEnabled = s.view.zoom < 2
     x.imageSmoothingQuality = 'high'
+    if (s.tileMode) {
+      // repeat preview: the neighbouring tiles show how the print joins
+      x.globalAlpha = 0.72
+      for (let oy = -1; oy <= 1; oy++) for (let ox = -1; ox <= 1; ox++) if (ox || oy) x.drawImage(this.composite, ox * d.width, oy * d.height)
+      x.globalAlpha = 1
+    }
     x.drawImage(this.composite, 0, 0)
+    if (s.tileMode) {
+      x.strokeStyle = 'rgba(233,210,90,0.8)'
+      x.lineWidth = 1.5 / s.view.zoom
+      x.setLineDash([8 / s.view.zoom, 6 / s.view.zoom])
+      x.strokeRect(0, 0, d.width, d.height)
+      x.setLineDash([])
+    }
+    if (this.measureDraft) {
+      const { a, b } = this.measureDraft
+      const ppc = this.pxPerCm()
+      drawDimension(x, a, b, s.measure.calibrating ? 'Calibrar' : formatLength(Math.hypot(b.x - a.x, b.y - a.y), ppc, s.measure.unit), s.measure.color, 1 / s.view.zoom)
+    }
     x.imageSmoothingEnabled = true
     // selection overlay
     if (s.selection && !this.transform) {
@@ -713,6 +733,8 @@ class Editor {
     if (s.tool === 'guide') return this.guideDown(p, sx, sy)
     if (this.transform) return this.transformDown(p, sx, sy)
     if (s.adjust === 'liquify') return this.liquifyDown(p)
+    if (s.adjust && this.filterPaint) return this.filterStrokeDown(e, p)
+    if (s.tool === 'measure') { this.measureDraft = { a: p, b: p }; this.needsDraw = true; return }
     if (s.adjust === 'clone') {
       if (s.cloneSource) {
         const cs = this.toScreen(s.cloneSource.x, s.cloneSource.y)
@@ -737,6 +759,8 @@ class Editor {
     if (this.cloneDrag) { set({ cloneSource: p }); this.cloneOffset = null; return }
     if (this.selDraft) return this.selectMove(p)
     if (this.textDrag) return this.textMove(p)
+    if (this.fpStroke) return this.filterStrokeMove(e)
+    if (this.measureDraft) { this.measureDraft.b = this.snapMeasure(this.measureDraft.a, p); this.needsDraw = true; return }
     if (this.live) this.strokeMove(e)
     void s
   }
@@ -749,6 +773,8 @@ class Editor {
     if (this.cloneDrag) { this.cloneDrag = false; return }
     if (this.selDraft) return this.selectUp()
     if (this.textDrag) { this.textDrag = null; return }
+    if (this.fpStroke) return this.filterStrokeUp()
+    if (this.measureDraft) return this.measureUp()
     if (this.live) this.strokeUp(e)
   }
 
@@ -786,7 +812,7 @@ class Editor {
       cloneOffset: this.cloneOffset || undefined,
       alphaLock: L.alphaLock && target.target === 'content',
       selection: s.selection,
-      symmetry: symmetryFn(s.guides, d.width, d.height),
+      symmetry: this.wrapSymmetry(symmetryFn(s.guides, d.width, d.height)),
       pressureCurve: bezierCurve(s.prefs.pressureCurve),
       maskValue,
       viewRotation: s.view.rot,
@@ -1446,6 +1472,136 @@ class Editor {
     this.needsDraw = true
   }
 
+  // ============ repeat (tile) painting ============
+  /** In repeat mode every dab is also painted one tile away in each direction, so strokes wrap. */
+  private wrapSymmetry(base: SymmetryFn | null): SymmetryFn | null {
+    const s = get()
+    if (!s.tileMode || !s.doc) return base
+    const w = s.doc.width, h = s.doc.height
+    return (x, y) => {
+      const copies = base ? base(x, y) : [[x, y, 0, false] as [number, number, number, boolean]]
+      const out: [number, number, number, boolean][] = []
+      for (const [cx, cy, a, m] of copies) for (let oy = -1; oy <= 1; oy++) for (let ox = -1; ox <= 1; ox++) out.push([cx + ox * w, cy + oy * h, a, m])
+      return out
+    }
+  }
+
+  // ============ measurements ============
+  measureDraft: { a: P; b: P } | null = null
+  onCalibrate: ((px: number) => void) | null = null
+
+  pxPerCm(): number {
+    const s = get()
+    return s.measure.pxPerCm || (s.doc ? s.doc.dpi / 2.54 : 118.11)
+  }
+
+  private snapMeasure(a: P, p: P): P {
+    const dx = p.x - a.x, dy = p.y - a.y
+    const len = Math.hypot(dx, dy)
+    let ang = Math.atan2(dy, dx)
+    const step = Math.PI / 12
+    const snapped = Math.round(ang / step) * step
+    if (this.shiftKey || Math.abs(snapped - ang) < 0.035) ang = snapped
+    return { x: a.x + Math.cos(ang) * len, y: a.y + Math.sin(ang) * len }
+  }
+
+  private measureUp() {
+    const s = get()
+    const { a, b } = this.measureDraft!
+    this.measureDraft = null
+    const len = Math.hypot(b.x - a.x, b.y - a.y)
+    this.needsDraw = true
+    if (len < 4) return
+    if (s.measure.calibrating) { this.onCalibrate?.(len); return }
+    const d = s.doc!
+    let L = d.layers.find((l) => l.name === 'Medidas' && l.kind === 'raster' && l.parentId === null)
+    if (!L) {
+      L = newLayer(d.width, d.height, 'Medidas')
+      const nl = L
+      commit('Capa de medidas', (doc) => ({ ...doc, layers: [...doc.layers, nl] }))
+    }
+    const layer = get().doc!.layers.find((l) => l.id === L!.id)!
+    beginPixels(layer, 'content')
+    const unit = Math.max(1, Math.min(d.width, d.height) / 900)
+    drawDimension(ctx2d(layer.canvas), a, b, formatLength(len, this.pxPerCm(), s.measure.unit), s.measure.color, unit)
+    endPixels('Medida', null)
+    this.invalidate()
+  }
+
+  // ============ adjustments applied with a brush (Pencil mode) ============
+  filterPaint: { layerId: string; original: Canvas; filtered: Canvas; mask: Canvas; out: Canvas } | null = null
+  private fpStroke: Stroke | null = null
+
+  startFilterPaint(layerId: string, original: Canvas, filtered: Canvas) {
+    const mask = makeCanvas(original.width, original.height)
+    this.filterPaint = { layerId, original, filtered, mask, out: cloneCanvas(original) }
+    this.recomposeFilterPaint()
+  }
+
+  setFilterPaintFiltered(filtered: Canvas) {
+    if (!this.filterPaint) return
+    this.filterPaint.filtered = filtered
+    this.recomposeFilterPaint()
+  }
+
+  stopFilterPaint(): Canvas | null {
+    const fp = this.filterPaint
+    this.filterPaint = null
+    this.fpStroke = null
+    return fp ? fp.out : null
+  }
+
+  private recomposeFilterPaint(live?: Stroke) {
+    const fp = this.filterPaint
+    if (!fp) return
+    let mask = fp.mask
+    if (live) { mask = cloneCanvas(fp.mask); live.applyTo(mask) }
+    const t = cloneCanvas(fp.filtered)
+    const tx = ctx2d(t)
+    tx.globalCompositeOperation = 'destination-in'
+    tx.drawImage(mask, 0, 0)
+    const ox = ctx2d(fp.out)
+    ox.clearRect(0, 0, fp.out.width, fp.out.height)
+    ox.drawImage(fp.original, 0, 0)
+    ox.drawImage(t, 0, 0)
+    this.setFilterPreview(fp.layerId, fp.out)
+  }
+
+  private filterStrokeDown(e: PointerEvent, p: P) {
+    const s = get()
+    const fp = this.filterPaint!
+    const erase = s.tool === 'erase'
+    const bt: BrushTool = erase ? 'erase' : 'paint'
+    const brush = this.brushFor(bt)
+    this.fpStroke = new Stroke(fp.mask.width, fp.mask.height, {
+      brush, size: this.sizePx(bt, brush.props.maxSize), opacity: s.toolOpacity[bt], color: '#ffffff', mode: 'mask', layer: fp.mask,
+      maskValue: erase ? 0 : 1, selection: s.selection, pressureCurve: bezierCurve(s.prefs.pressureCurve),
+    })
+    this.fpStroke.addPoint({ x: p.x, y: p.y, p: this.pressureOf(e), tiltX: e.tiltX || 0, tiltY: e.tiltY || 0, t: e.timeStamp })
+    this.fpStroke.render()
+    this.recomposeFilterPaint(this.fpStroke)
+  }
+
+  private filterStrokeMove(e: PointerEvent) {
+    const st = this.fpStroke!
+    const r = this.host!.getBoundingClientRect()
+    const evs = ((e as any).getCoalescedEvents?.() as PointerEvent[] | undefined) || [e]
+    for (const ev of evs.length ? evs : [e]) {
+      const q = this.toDoc(ev.clientX - r.left, ev.clientY - r.top)
+      st.addPoint({ x: q.x, y: q.y, p: this.pressureOf(ev), tiltX: ev.tiltX || 0, tiltY: ev.tiltY || 0, t: ev.timeStamp })
+    }
+    st.render()
+    this.recomposeFilterPaint(st)
+  }
+
+  private filterStrokeUp() {
+    const st = this.fpStroke!
+    st.end()
+    st.applyTo(this.filterPaint!.mask)
+    this.fpStroke = null
+    this.recomposeFilterPaint()
+  }
+
   // ============ undo/redo ============
   undo() {
     if (this.transform) { this.cancelTransform(); return }
@@ -1535,7 +1691,7 @@ export const editor = new Editor()
 // Recomposite whenever the doc, selection or animation state changes.
 import { useStore } from './store'
 useStore.subscribe((s, p) => {
-  if (s.doc !== p.doc || s.docVersion !== p.docVersion || s.anim !== p.anim) editor.invalidate()
+  if (s.doc !== p.doc || s.docVersion !== p.docVersion || s.anim !== p.anim || s.pages !== p.pages || s.tileMode !== p.tileMode) editor.invalidate()
   else if (s.view !== p.view || s.selVersion !== p.selVersion || s.guides !== p.guides || s.prefs !== p.prefs || s.transformMode !== p.transformMode) editor.invalidate(s.transformMode !== p.transformMode)
   if (s.transformMode !== p.transformMode) editor.syncTransformMode()
 })

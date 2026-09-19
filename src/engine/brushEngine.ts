@@ -46,6 +46,8 @@ export class Stroke {
   h: number
   buffer: Canvas
   bctx: CanvasRenderingContext2D
+  private dual: Canvas | null = null
+  private dctx: CanvasRenderingContext2D | null = null
   raw: InputPoint[] = []
   path: PathPoint[] = []
   bbox = new BBox()
@@ -75,6 +77,11 @@ export class Stroke {
     this.bctx = ctx2d(this.buffer)
     this.bctx.setTransform(1, 0, 0, 1, 0, 0)
     this.bctx.clearRect(0, 0, w, h)
+    if (o.brush.dual?.enabled && o.mode !== 'smudge') {
+      this.dual = pooled(w, h, 'dual')
+      this.dctx = ctx2d(this.dual)
+      this.dctx.clearRect(0, 0, w, h)
+    }
   }
 
   get usesBuffer() { return this.o.mode !== 'smudge' }
@@ -178,6 +185,7 @@ export class Stroke {
     if (!this.usesBuffer) return
     this.bctx.setTransform(1, 0, 0, 1, 0, 0)
     this.bctx.clearRect(0, 0, this.w, this.h)
+    if (this.dctx) { this.dctx.setTransform(1, 0, 0, 1, 0, 0); this.dctx.clearRect(0, 0, this.w, this.h) }
     this.rand = mulberry32(this.seed)
     this.rand()
     this.dabDist = 0
@@ -341,6 +349,18 @@ export class Stroke {
     }
     g.globalAlpha = 1
     g.setTransform(1, 0, 0, 1, 0, 0)
+    if (this.dctx && b.dual) {
+      // secondary tip: its coverage later masks the primary stroke
+      const d = this.dctx, R = this.rand
+      const ds = size * b.dual.scale
+      const sc = b.dual.scatter * size
+      const a = R() * Math.PI * 2, r = R() * sc
+      d.setTransform(1, 0, 0, 1, 0, 0)
+      d.translate(x + Math.cos(a) * r, y + Math.sin(a) * r)
+      d.rotate(R() * Math.PI * 2)
+      d.drawImage(getTip({ ...b, shape: { ...b.shape, source: b.dual.source, hardness: b.dual.hardness } } as Brush), -ds / 2, -ds / 2, ds, ds)
+      d.setTransform(1, 0, 0, 1, 0, 0)
+    }
   }
 
   private patch(size: number, key: string): Canvas {
@@ -440,7 +460,8 @@ export class Stroke {
     const b = this.o.brush
     const needGrain = b.grain.source !== 'none' && b.grain.depth > 0
     const needSel = !!this.o.selection
-    if (!needGrain && !needSel) return this.buffer
+    const needDual = !!this.dual
+    if (!needGrain && !needSel && !needDual) return this.buffer
     const t = pooled(this.w, this.h, 'prepared')
     const x = ctx2d(t)
     x.setTransform(1, 0, 0, 1, 0, 0)
@@ -455,6 +476,10 @@ export class Stroke {
       x.globalCompositeOperation = 'destination-in'
       x.fillStyle = pat
       x.fillRect(0, 0, this.w, this.h)
+    }
+    if (needDual) {
+      x.globalCompositeOperation = 'destination-in'
+      x.drawImage(this.dual!, 0, 0)
     }
     if (needSel) {
       x.globalCompositeOperation = 'destination-in'
