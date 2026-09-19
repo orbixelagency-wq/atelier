@@ -1,13 +1,14 @@
 import {
   Aperture, Blend, CircleDashed, Contrast, Droplets, Focus, Grid3x3, Layers2, Move, Palette, Rainbow, ScanLine,
-  Shirt, Sparkles, Spline, Stamp, SunMedium, Waves, Zap, MoveDiagonal,
+  Eraser, Shirt, Sparkles, Spline, Stamp, SunMedium, Waves, Zap, MoveDiagonal,
 } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as F from '../../engine/filters'
 import { displace, offsetHalf, shadingFrom } from '../../engine/pattern'
+import { removeBackground } from '../../engine/bg'
 import { addLayer } from '../../state/docOps'
 import type { Canvas } from '../../engine/util'
-import { ctx2d } from '../../engine/util'
+import { ctx2d, hsvToHex } from '../../engine/util'
 import { active } from '../../state/docOps'
 import { editor } from '../../state/editor'
 import { editPixels } from '../../state/history'
@@ -20,7 +21,7 @@ const MENU: { group: string; items: [AdjustKind, string, any][] }[] = [
   { group: 'Desenfoque', items: [['gaussian', 'Desenfoque gaussiano', CircleDashed], ['motion', 'Desenfoque de movimiento', Move], ['perspective', 'Desenfoque de perspectiva', Focus]] },
   { group: 'Efectos', items: [['noise', 'Ruido', Grid3x3], ['sharpen', 'Nitidez', Aperture], ['bloom', 'Resplandor', Sparkles], ['glitch', 'Fallo técnico', Zap], ['halftone', 'Semitono', Droplets], ['chromatic', 'Aberración cromática', Layers2]] },
   { group: 'Pintura', items: [['liquify', 'Licuar', Waves], ['clone', 'Clonar', Stamp]] },
-  { group: 'Moda', items: [['displace', 'Ajustar a tela (mockup)', Shirt], ['offset', 'Desplazar medio módulo', MoveDiagonal]] },
+  { group: 'Moda', items: [['removebg', 'Quitar fondo', Eraser], ['displace', 'Ajustar a tela (mockup)', Shirt], ['offset', 'Desplazar medio módulo', MoveDiagonal]] },
   { group: 'Otros', items: [['invert', 'Invertir', Palette], ['threshold', 'Umbral', ScanLine], ['posterize', 'Posterizar', Palette]] },
 ]
 
@@ -66,6 +67,7 @@ const DEFAULTS: Record<string, any> = {
   levels: { black: 0, white: 1, gamma: 1 },
   displace: { mapId: '', strength: 0.5, softness: 3, shade: true },
   offset: { fx: 0.5, fy: 0.5 },
+  removebg: { mode: 'auto', color: '#ffffff', tolerance: 0.18, softness: 1, shrink: 1, trim: false },
 }
 
 function run(kind: AdjustKind, src: Canvas, p: any): Canvas {
@@ -92,6 +94,7 @@ function run(kind: AdjustKind, src: Canvas, p: any): Canvas {
       return map ? displace(src, map.canvas, p.strength * 6, p.softness) : src
     }
     case 'offset': return offsetHalf(src, p.fx, p.fy)
+    case 'removebg': return removeBackground(src, p)
     default: return src
   }
 }
@@ -298,6 +301,22 @@ function FilterPanel({ kind }: { kind: AdjustKind }) {
       </>
       break
     }
+    case 'removebg': body = <>
+      <Seg value={p.mode} onChange={(v) => up({ mode: v })} options={[['auto', 'Fondo automático'], ['color', 'Quitar un color']]} />
+      {p.mode === 'color' && (
+        <label className="row" style={{ justifyContent: 'space-between' }}>
+          <span className="name" style={{ fontSize: 13, color: 'var(--ink-2)' }}>Color a quitar</span>
+          <span className="row" style={{ gap: 6 }}>
+            <button className="btn" style={{ height: 28 }} onClick={() => up({ color: hsvToHex(get().color.primary) })}>Usar color actual</button>
+            <input type="color" value={p.color} onChange={(e) => up({ color: e.target.value })} aria-label="Color a quitar" style={{ width: 40, height: 30, border: 0, background: 'none' }} />
+          </span>
+        </label>
+      )}
+      {S('Tolerancia', 'tolerance', 0.02, 0.6)}
+      {S('Suavizar bordes', 'softness', 0, 6, (v) => `${v.toFixed(1)} px`)}
+      {S('Recortar halo', 'shrink', 0, 6, (v) => `${Math.round(v)} px`)}
+      <Seg value={p.trim ? 'on' : 'off'} onChange={(v) => up({ trim: v === 'on' })} options={[['off', 'Mantener tamaño'], ['on', 'Recortar al dibujo']]} />
+    </>; break
     case 'offset': body = <>
       <span className="label" style={{ fontWeight: 500 }}>Desplaza la capa con envoltura para ver y repasar las juntas del módulo del estampado.</span>
       {S('Horizontal', 'fx')}{S('Vertical', 'fy')}

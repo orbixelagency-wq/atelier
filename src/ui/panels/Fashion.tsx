@@ -1,12 +1,15 @@
 import {
-  ClipboardList, Grid3x3, ImagePlus, Layers2, Move, Palette, PenTool, Repeat, Ruler, Scissors, Shirt, Trash2, Waves,
+  ClipboardList, Grid3x3, ImagePlus, Layers2, Maximize, Move, Paintbrush, Palette, PenTool, Repeat, Ruler, Scissors, Shirt,
+  SquareDashedBottom, Trash2, Waves,
 } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { compositeDoc } from '../../engine/compositor'
-import { GARMENTS, garmentThumb, renderGarment, type GarmentOptions } from '../../engine/garments'
+import { GARMENTS, GARMENT_GROUPS, garmentThumb, printAreas, renderGarment, type GarmentOptions } from '../../engine/garments'
+import { looksLikeFlatBackground, removeBackground } from '../../engine/bg'
 import { patternFill, REPEATS, type PatternOpts } from '../../engine/pattern'
 import { deletePattern, listPatterns, putPattern, type PatternItem } from '../../engine/storage'
 import { blobToCanvas, canvasToBlob, contentBounds, ctx2d, makeCanvas, pickFile, thumbnail, uid, type Canvas } from '../../engine/util'
+import { editPixels } from '../../state/history'
 import { active, newLayer } from '../../state/docOps'
 import { editor } from '../../state/editor'
 import { commit, commitFrom, replaceDoc, snapshot } from '../../state/history'
@@ -39,6 +42,10 @@ export function FashionMenu() {
           finishModes()
           set({ tool: 'paint', lastBrushTool: 'paint', libraryCategory: 'Costura y textil', panel: 'brushes', ...(b ? { toolBrush: { ...get().toolBrush, paint: b.id } } : {}) })
         })}
+        {item(ImagePlus, 'Insertar diseño en la prenda', 'Quita el fondo y lo coloca dentro del área de estampado', () => { set({ panel: null }); insertDesign() })}
+        {item(Paintbrush, 'Pintar zona', 'Colorea una parte de la prenda sin salirte de las costuras', () => { finishModes(); set({ panel: 'zone', tool: 'zone' }) })}
+        {item(Scissors, 'Quitar fondo de una capa', 'Deja el diseño recortado sobre la prenda', () => openAdjust('removebg'))}
+        {item(Maximize, 'Ajustar al área de estampado', 'Escala el diseño de la capa activa al área marcada', () => { set({ panel: null }); fitToPrintArea() })}
         {item(Ruler, 'Medidas', 'Cotas en cm o pulgadas sobre el plano, con calibración', () => { finishModes(); set({ panel: 'measure', tool: 'measure' }) })}
         <div className="divider" />
         <div className="label" style={{ padding: '2px 10px 4px' }}>Estampados</div>
@@ -49,6 +56,7 @@ export function FashionMenu() {
         <div className="label" style={{ padding: '2px 10px 4px' }}>Presentar la colección</div>
         {item(Palette, 'Colorways', 'Variantes de color de la prenda y tablero comparativo', () => set({ panel: null, fashionDialog: 'colorway' }))}
         {item(Waves, 'Ajustar a tela (mockup)', 'Adapta un diseño a los pliegues de una foto de prenda', () => openAdjust('displace'))}
+        <Switch label="Mostrar el área de estampado" sub="Guía amarilla con el espacio imprimible de la prenda" on={useStore.getState().showPrintAreas} onChange={(v) => set({ showPrintAreas: v })} />
         {item(ClipboardList, 'Ficha técnica', 'Tech pack en PDF: plano, colores, tejido y tabla de medidas', () => set({ panel: null, fashionDialog: 'techpack' }))}
       </div>
     </Pop>
@@ -61,7 +69,8 @@ export function insertGarment(gid: string, opts: GarmentOptions) {
   const g = GARMENTS.find((x) => x.id === gid)
   if (!d || !g) return
   const { fill, lines } = renderGarment(g, d.width, d.height, opts)
-  const group = newLayer(1, 1, `Plano · ${g.name}`, { kind: 'group' })
+  const areas = printAreas(g, d.width, d.height, opts)
+  const group = newLayer(1, 1, `Plano · ${g.name}`, { kind: 'group', garment: { garment: g.id, views: opts.views, areas } })
   const base = newLayer(d.width, d.height, 'Color base', { parentId: group.id })
   ctx2d(base.canvas).drawImage(fill, 0, 0)
   const art = newLayer(d.width, d.height, 'Estampado y detalles', { parentId: group.id, clip: true })
@@ -75,8 +84,78 @@ export function insertGarment(gid: string, opts: GarmentOptions) {
   toast(`${g.name} añadida · pinta en «Estampado y detalles»: queda recortado a la prenda`)
 }
 
+/** Put a design image inside the garment: knock out its background, fit it to the print area and clip it. */
+export async function insertDesign(file?: File) {
+  const d = get().doc
+  if (!d) return
+  const f = file || (await pickFile('image/*'))[0]
+  if (!f) return
+  let art = await blobToCanvas(f)
+  if (looksLikeFlatBackground(art)) {
+    art = removeBackground(art, { mode: 'auto', color: '#ffffff', tolerance: 0.16, softness: 1, shrink: 1, trim: true })
+    toast('Fondo quitado automáticamente · ajústalo en Ajustes › Quitar fondo')
+  }
+  const gm = editor.garmentMeta()
+  const area = gm?.meta.areas[0] || { x: d.width * 0.25, y: d.height * 0.25, w: d.width * 0.5, h: d.height * 0.5 }
+  const k = Math.min(area.w / art.width, area.h / art.height)
+  const w = art.width * k, h = art.height * k
+  const c = makeCanvas(d.width, d.height)
+  const x = ctx2d(c)
+  x.imageSmoothingQuality = 'high'
+  x.drawImage(art, area.x + (area.w - w) / 2, area.y + (area.h - h) / 2, w, h)
+  const L = newLayer(d.width, d.height, f.name.replace(/\.[^.]+$/, '').slice(0, 30) || 'Diseño', { clip: !!gm, parentId: gm ? gm.group.id : null })
+  ctx2d(L.canvas).drawImage(c, 0, 0)
+  commit('Insertar diseño', (doc) => ({ ...doc, layers: [...doc.layers, L], activeId: L.id }))
+  set({ selection: null, panel: null, tool: 'transform' })
+  editor.beginTransform()
+  toast(gm ? 'El diseño se amplía solo dentro de la prenda' : 'Diseño insertado')
+}
+
+/** Scale the active layer's artwork to fill the print area of the garment. */
+export function fitToPrintArea(index = 0) {
+  const d = get().doc
+  const L = active()
+  const gm = editor.garmentMeta()
+  if (!d || !L || L.kind === 'group' || !gm) { toast('Necesitas una plantilla de prenda y una capa con el diseño'); return }
+  const area = gm.meta.areas[Math.min(index, gm.meta.areas.length - 1)]
+  const b = contentBounds(L.canvas)
+  if (!b) { toast('La capa está vacía'); return }
+  const k = Math.min(area.w / b.w, area.h / b.h)
+  const src = makeCanvas(b.w, b.h)
+  ctx2d(src).drawImage(L.canvas, b.x, b.y, b.w, b.h, 0, 0, b.w, b.h)
+  editPixels('Ajustar al área de estampado', L, (cv) => {
+    const x = ctx2d(cv)
+    x.clearRect(0, 0, cv.width, cv.height)
+    x.imageSmoothingQuality = 'high'
+    x.drawImage(src, area.x + (area.w - b.w * k) / 2, area.y + (area.h - b.h * k) / 2, b.w * k, b.h * k)
+  })
+  if (!L.clip) updateLayerClip(L.id)
+  editor.invalidate()
+}
+
+function updateLayerClip(id: string) {
+  commit('Recortar a la prenda', (doc) => ({ ...doc, layers: doc.layers.map((l) => (l.id === id ? { ...l, clip: true } : l)) }))
+}
+
+export function ZoneBar() {
+  const z = useStore((s) => s.zone)
+  const up = (p: Partial<typeof z>) => set({ zone: { ...get().zone, ...p } })
+  return (
+    <div className="bottombar" onPointerDown={(e) => e.stopPropagation()}>
+      <span className="bb-btn" style={{ pointerEvents: 'none' }}><Paintbrush size={16} /> Toca una zona de la prenda</span>
+      <div className="bb-sep" />
+      <Seg value={z.mode} onChange={(v) => up({ mode: v })} options={[['fill', 'Rellenar'], ['select', 'Seleccionar']]} />
+      <div className="bb-slider" style={{ minWidth: 200 }}>
+        <HSlider name="Tolerancia" value={z.tolerance} min={0.05} max={0.8} onChange={(v) => up({ tolerance: v })} />
+      </div>
+      <button className="btn primary" onClick={() => set({ panel: null, tool: get().lastBrushTool })}>Hecho</button>
+    </div>
+  )
+}
+
 function GarmentDialog() {
   const [gid, setGid] = useState(GARMENTS[0].id)
+  const [group, setGroup] = useState('Todas')
   const [views, setViews] = useState<GarmentOptions['views']>('both')
   const [color, setColor] = useState('#ffffff')
   const [lineColor, setLineColor] = useState('#1d1c1a')
@@ -88,8 +167,13 @@ function GarmentDialog() {
   return (
     <Dialog onClose={close}>
       <h2>Plantillas de prendas</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: 8 }}>
-        {GARMENTS.map((g) => (
+      <div style={{ display: 'flex', gap: 4, overflowX: 'auto', paddingBottom: 2 }}>
+        {['Todas', ...GARMENT_GROUPS].map((gr) => (
+          <button key={gr} className={'btn' + (group === gr ? ' primary' : '')} style={{ height: 28, fontSize: 12 }} onClick={() => setGroup(gr)}>{gr}</button>
+        ))}
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: 8, maxHeight: 320, overflowY: 'auto' }}>
+        {GARMENTS.filter((g) => group === 'Todas' || g.group === group).map((g) => (
           <button key={g.id} className="btn" onClick={() => setGid(g.id)}
             style={{ height: 'auto', padding: 8, flexDirection: 'column', gap: 4, boxShadow: gid === g.id ? 'inset 0 0 0 2px var(--chalk)' : undefined }}>
             <img src={thumbs[g.id]} alt="" style={{ width: '100%', height: 56, objectFit: 'contain' }} draggable={false} />
@@ -310,6 +394,8 @@ export function MeasureBar() {
 }
 
 // ---------------------------------------------------------------- dialogs host
+export { GARMENT_GROUPS }
+
 export function FashionDialogs() {
   const d = useStore((s) => s.fashionDialog)
   if (d === 'garment') return <GarmentDialog />

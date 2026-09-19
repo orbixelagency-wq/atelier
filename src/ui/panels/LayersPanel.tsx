@@ -1,5 +1,5 @@
 import {
-  Check, ChevronDown, ChevronRight, Copy, Eye, FolderPlus, Lock, Plus, Trash2, Unlock,
+  Check, ChevronDown, ChevronRight, Copy, Eye, FolderOpen, FolderPlus, Lock, Plus, Trash2, Unlock,
 } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { BLEND_GROUPS, blendShort, type Layer } from '../../engine/types'
@@ -21,7 +21,7 @@ function Thumb({ layer, version }: { layer: Layer; version: number }) {
         className={'thumb checker' + (layer.mask && !layer.editMask ? ' mask-on' : '')}
         onClick={(e) => { if (layer.mask) { e.stopPropagation(); updateLayer(layer.id, { editMask: false }, 'Editar capa') } }}
       >
-        {layer.kind === 'group' ? <div style={{ display: 'grid', placeItems: 'center', height: '100%', color: '#555', fontWeight: 700, fontSize: 11 }}>GRUPO</div> : url && <img src={url} alt="" draggable={false} />}
+        {layer.kind === 'group' ? <div style={{ display: 'grid', placeItems: 'center', height: '100%', background: 'var(--chrome-solid)', color: 'var(--ink-2)' }}><FolderOpen size={18} /></div> : url && <img src={url} alt="" draggable={false} />}
       </div>
       {layer.mask && (
         <div className={'mask-thumb' + (layer.editMask ? ' on' : '')} title="Máscara de capa" onClick={(e) => { e.stopPropagation(); updateLayer(layer.id, { editMask: true }, 'Editar máscara') }}>
@@ -188,14 +188,14 @@ export function LayersPanel() {
               >
                 <div className="row" style={{ gap: 4 }}>
                   {l.kind === 'group' && (
-                    <button className="icon-btn" style={{ width: 20 }} aria-label={l.collapsed ? 'Expandir' : 'Contraer'} onClick={() => updateLayer(l.id, { collapsed: !l.collapsed }, 'Grupo')}>
+                    <button className="icon-btn" style={{ width: 18, marginLeft: -6 }} aria-label={l.collapsed ? 'Expandir' : 'Contraer'} onClick={() => updateLayer(l.id, { collapsed: !l.collapsed }, 'Grupo')}>
                       {l.collapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
                     </button>
                   )}
                   <Thumb layer={l} version={version} />
                 </div>
                 <div style={{ minWidth: 0 }}>
-                  <div className="layer-name">{l.name}</div>
+                  <div className="layer-name" title={l.name}>{l.name}</div>
                   <div className="layer-meta">
                     {l.locked && <Lock size={11} />}
                     {l.alphaLock && <span>α</span>}

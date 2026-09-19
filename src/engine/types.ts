@@ -41,6 +41,12 @@ export interface TextMeta {
   outline?: boolean
 }
 
+export interface GarmentMeta {
+  garment: string
+  views: 'front' | 'back' | 'both'
+  areas: { view: 'front' | 'back'; x: number; y: number; w: number; h: number }[]
+}
+
 export interface Layer {
   id: string
   name: string
@@ -59,6 +65,7 @@ export interface Layer {
   collapsed?: boolean
   text?: TextMeta
   hold?: number // animation: extra frames to hold
+  garment?: GarmentMeta // set on the group a garment flat was inserted as
 }
 
 export interface Doc {
@@ -177,5 +184,5 @@ export interface Brush {
 
 export interface Palette { id: string; name: string; colors: (string | null)[] }
 
-export type Tool = 'paint' | 'smudge' | 'erase' | 'select' | 'transform' | 'eyedropper' | 'liquify' | 'clone' | 'text' | 'crop' | 'guide' | 'filterPen' | 'measure'
+export type Tool = 'paint' | 'smudge' | 'erase' | 'select' | 'transform' | 'eyedropper' | 'liquify' | 'clone' | 'text' | 'crop' | 'guide' | 'filterPen' | 'measure' | 'zone'
 export type BrushTool = 'paint' | 'smudge' | 'erase'

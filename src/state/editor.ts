@@ -3,6 +3,7 @@
 import { Stroke, type StrokeMode } from '../engine/brushEngine'
 import { compositeDoc, referenceComposite, type FloatLayer, type LiveStroke } from '../engine/compositor'
 import { dilate, floodMask, maskToCanvas } from '../engine/fill'
+import type { GarmentMeta } from '../engine/types'
 import { assistFn, drawGuides, guideCenter, symmetryFn } from '../engine/guides'
 import { Liquify } from '../engine/liquify'
 import { detectShape, SHAPE_NAMES } from '../engine/quickshape'
@@ -45,6 +46,7 @@ interface TransformState {
   src: { x: number; y: number; w: number; h: number }
   quad: P[] // tl, tr, br, bl
   grid: P[] // 16 warp controls
+  clamp: { x: number; y: number; w: number; h: number } | null
   selection: Canvas | null
   flipped: boolean
 }
@@ -300,6 +302,18 @@ class Editor {
       x.setLineDash([8 / s.view.zoom, 6 / s.view.zoom])
       x.strokeRect(0, 0, d.width, d.height)
       x.setLineDash([])
+    }
+    if (s.showPrintAreas && !s.uiHidden) {
+      const gm = this.garmentMeta()
+      if (gm) {
+        x.save()
+        x.strokeStyle = 'rgba(233,210,90,0.85)'
+        x.lineWidth = 1.5 / s.view.zoom
+        x.setLineDash([10 / s.view.zoom, 7 / s.view.zoom])
+        for (const a of gm.meta.areas) x.strokeRect(a.x, a.y, a.w, a.h)
+        x.setLineDash([])
+        x.restore()
+      }
     }
     if (this.measureDraft) {
       const { a, b } = this.measureDraft
@@ -735,6 +749,7 @@ class Editor {
     if (s.adjust === 'liquify') return this.liquifyDown(p)
     if (s.adjust && this.filterPaint) return this.filterStrokeDown(e, p)
     if (s.tool === 'measure') { this.measureDraft = { a: p, b: p }; this.needsDraw = true; return }
+    if (s.tool === 'zone') return this.zoneAt(p)
     if (s.adjust === 'clone') {
       if (s.cloneSource) {
         const cs = this.toScreen(s.cloneSource.x, s.cloneSource.y)
@@ -1067,7 +1082,12 @@ class Editor {
     const b = contentBounds(float)
     if (!b) { toast(sel ? 'La selección está vacía en esta capa' : 'La capa está vacía'); return false }
     const quad = [{ x: b.x, y: b.y }, { x: b.x + b.w, y: b.y }, { x: b.x + b.w, y: b.y + b.h }, { x: b.x, y: b.y + b.h }]
-    this.transform = { layerId: L.id, float, rest, src: b, quad, grid: gridFromQuad(quad), selection: sel, flipped: false }
+    let clamp: { x: number; y: number; w: number; h: number } | null = null
+    if (get().transformClamp && L.clip) {
+      const fabric = this.fabricLayer()
+      if (fabric) clamp = contentBounds(fabric.canvas)
+    }
+    this.transform = { layerId: L.id, float, rest, src: b, quad, grid: gridFromQuad(quad), selection: sel, flipped: false, clamp }
     this.invalidate()
     return true
   }
@@ -1232,9 +1252,41 @@ class Editor {
       t.grid = gridFromQuad(t.quad)
       void nw; void nh
     }
+    if (t.clamp) this.applyClamp(t)
     this.invalidate()
   }
   shiftKey = false
+
+  /** Keep the transformed design inside the fabric: shrink it first, then move it back in. */
+  private applyClamp(t: TransformState) {
+    const r = t.clamp!
+    const pts = () => (get().transformMode === 'warp' ? [...t.grid, ...t.quad] : t.quad)
+    const box = () => {
+      const p2 = pts()
+      const xs = p2.map((q) => q.x), ys = p2.map((q) => q.y)
+      return { x0: Math.min(...xs), x1: Math.max(...xs), y0: Math.min(...ys), y1: Math.max(...ys) }
+    }
+    let b = box()
+    const k = Math.min(1, r.w / Math.max(1, b.x1 - b.x0), r.h / Math.max(1, b.y1 - b.y0))
+    if (k < 1) {
+      const cx = (b.x0 + b.x1) / 2, cy = (b.y0 + b.y1) / 2
+      const scale = (q: P) => { q.x = cx + (q.x - cx) * k; q.y = cy + (q.y - cy) * k }
+      t.quad.forEach(scale)
+      t.grid.forEach(scale)
+      b = box()
+    }
+    let dx = 0, dy = 0
+    if (b.x0 < r.x) dx = r.x - b.x0
+    else if (b.x1 > r.x + r.w) dx = r.x + r.w - b.x1
+    if (b.y0 < r.y) dy = r.y - b.y0
+    else if (b.y1 > r.y + r.h) dy = r.y + r.h - b.y1
+    if (dx || dy) {
+      const move = (q: P) => { q.x += dx; q.y += dy }
+      t.quad.forEach(move)
+      t.grid.forEach(move)
+    }
+  }
+
 
   transformAction(action: 'flipH' | 'flipV' | 'rot45' | 'fit' | 'reset') {
     const t = this.transform
@@ -1264,12 +1316,14 @@ class Editor {
       t.quad = [{ x: b.x, y: b.y }, { x: b.x + b.w, y: b.y }, { x: b.x + b.w, y: b.y + b.h }, { x: b.x, y: b.y + b.h }]
       t.grid = gridFromQuad(t.quad)
     }
+    if (t.clamp) this.applyClamp(t)
     this.invalidate()
   }
 
   syncTransformMode() {
     const t = this.transform
     if (!t) return
+    if (t.clamp) this.applyClamp(t)
     if (get().transformMode !== 'warp') {
       // leaving warp: keep the outer corners
       t.quad = [t.grid[0], t.grid[3], t.grid[15], t.grid[12]].map((p) => ({ ...p }))
@@ -1484,6 +1538,68 @@ class Editor {
       for (const [cx, cy, a, m] of copies) for (let oy = -1; oy <= 1; oy++) for (let ox = -1; ox <= 1; ox++) out.push([cx + ox * w, cy + oy * h, a, m])
       return out
     }
+  }
+
+  // ============ garment zones ============
+  /** The fabric of the garment the active layer belongs to: its "Color base" sibling. */
+  fabricLayer(): Layer | null {
+    const d = get().doc
+    if (!d) return null
+    const act = active()
+    const inGroup = act?.parentId ? d.layers.filter((l) => l.parentId === act.parentId && l.kind !== 'group') : []
+    return inGroup.find((l) => l.name === 'Color base')
+      || [...d.layers].reverse().find((l) => l.name === 'Color base' && l.kind !== 'group')
+      || null
+  }
+
+  garmentMeta(): { group: Layer; meta: GarmentMeta } | null {
+    const d = get().doc
+    if (!d) return null
+    const act = active()
+    const groups = d.layers.filter((l) => l.kind === 'group' && l.garment)
+    const own = act?.parentId ? groups.find((g) => g.id === act.parentId) : null
+    const g = own || groups[groups.length - 1]
+    return g ? { group: g, meta: g.garment! } : null
+  }
+
+  /** Flood the region under the pointer, bounded by the garment's line art, and fill or select it. */
+  private zoneAt(p: P) {
+    const s = get()
+    const d = s.doc!
+    const lines = d.layers.find((l) => l.reference && l.visible) || d.layers.find((l) => l.name === 'Líneas')
+    const fabric = this.fabricLayer()
+    if (!lines || !fabric) { toast('Inserta una plantilla de prenda para pintar zonas'); return }
+    let mask = floodMask(lines.canvas, p.x, p.y, s.zone.tolerance)
+    if (!mask) return
+    mask = dilate(mask, d.width, d.height, 2)
+    const region = maskToCanvas(mask, d.width, d.height)
+    // never leave the fabric; squaring the alpha drops the antialiased rim of the silhouette
+    const rx = ctx2d(region)
+    rx.globalCompositeOperation = 'destination-in'
+    for (let i = 0; i < 3; i++) rx.drawImage(fabric.canvas, 0, 0)
+    rx.globalCompositeOperation = 'source-over'
+    if (s.zone.mode === 'select') {
+      setSelection('Seleccionar zona', region)
+      set({ tool: 'paint', panel: null })
+      toast('Zona seleccionada: lo que pintes se queda dentro')
+      return
+    }
+    const target = active()?.locked || active()?.kind === 'group' ? fabric : (active() as Layer)
+    const color = hsvHex(s.color.primary)
+    const paint = makeCanvas(d.width, d.height)
+    const px = ctx2d(paint)
+    px.fillStyle = color
+    px.fillRect(0, 0, d.width, d.height)
+    px.globalCompositeOperation = 'destination-in'
+    px.drawImage(region, 0, 0)
+    beginPixels(target, 'content')
+    const tx = ctx2d(target.canvas)
+    tx.globalCompositeOperation = target.alphaLock ? 'source-atop' : 'source-over'
+    tx.drawImage(paint, 0, 0)
+    tx.globalCompositeOperation = 'source-over'
+    endPixels('Pintar zona', null)
+    this.pushColorHistory(color)
+    this.invalidate()
   }
 
   // ============ measurements ============

@@ -19,7 +19,14 @@ Estudio de pintura digital y edición de imagen en el navegador, con el modelo d
 
 ## Módulo Moda
 
-Botón **Moda** de la barra superior: plantillas técnicas de 9 prendas (delantero y espalda), 16 pinceles de costura y textil, modo repetición para diseñar estampados sin costuras, relleno con estampado (cuadrícula, media gota, ladrillo, espejo), colorways con tablero comparativo, cotas en cm/pulgadas, ajuste de diseños a fotos de prendas (mockup) y ficha técnica en PDF.
+Botón **Moda** de la barra superior:
+
+- **39 plantillas técnicas** propias (camisetas, sudaderas, chaquetas, pantalones y accesorios), delantero y espalda, con su área de estampado marcada.
+- **Insertar diseño**: quita el fondo de la imagen, la encaja en el área de estampado y la recorta a la tela, así que al ampliarla nunca sobresale de la prenda.
+- **Quitar fondo** automático o por color, con tolerancia y suavizado.
+- **Pintar zona**: colorea una parte de la prenda sin salirte de las costuras.
+- **16 pinceles de costura y textil**, modo repetición sin costuras y relleno con estampado.
+- **Colorways** con tablero comparativo, **medidas** en cm/pulgadas, **mockup** sobre fotos y **ficha técnica en PDF**.
 
 El análisis completo frente a Procreate está en [docs/ANALISIS-PROCREATE.md](docs/ANALISIS-PROCREATE.md).
 

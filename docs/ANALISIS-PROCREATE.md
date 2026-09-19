@@ -158,12 +158,16 @@ Leyenda: ✅ incluido en Atelier · 🟡 incluido en versión simplificada · �
 ## Módulo Moda (exclusivo de Atelier)
 | Herramienta | Qué hace |
 |---|---|
-| Plantillas de prendas | 9 planos técnicos (camiseta, manga larga, sudadera, hoodie, bomber, jogger, pantalón corto, gorra, tote), delantero y espalda, a la resolución del lienzo. Se crean como grupo: *Color base* + *Estampado y detalles* (recortado a la prenda) + *Líneas* (capa de referencia para ColorDrop). |
-| Pinceles de costura y textil | 16 pinceles: pespunte, doble pespunte, zigzag, overlock, cremallera, cordón, bordado satinado, remaches, denim, punto jersey, canalé, pana, piel, forro polar, malla deportiva y arrugas de tela. |
+| Plantillas de prendas | 39 planos técnicos propios en 5 familias (camisetas, sudaderas, chaquetas, pantalones y accesorios), delantero y espalda, dibujados en vector a la resolución del lienzo. Se insertan como grupo: *Color base* + *Estampado y detalles* (recortado a la tela) + *Líneas* (capa de referencia). Cada prenda lleva marcada su **área de estampado**. |
+| Insertar diseño en la prenda | Abre una imagen, le quita el fondo si lo detecta, la coloca dentro del área de estampado y la recorta a la tela: al ampliarla nunca se sale de la prenda. |
+| Quitar fondo | Automático (fondo conectado al borde, conserva los blancos interiores) o por color, con tolerancia, suavizado de bordes, recorte del halo y recorte al dibujo. |
+| Pintar zona | Toca una parte de la prenda y se rellena solo esa zona, limitada por las costuras; también puede convertirse en selección. |
+| Pinceles de costura y textil | 16 pinceles: pespunte, doble pespunte, zigzag, overlock, cremallera, cordón, bordado satinado, remaches, denim, punto jersey, canalé, pana, piel, forro polar, malla y arrugas de tela. |
 | Modo repetición | Pinta el módulo de un estampado: los trazos continúan por el borde opuesto y se ve la repetición alrededor. |
-| Desplazar medio módulo | Lleva las juntas al centro para repasarlas. |
-| Rellenar con estampado | Biblioteca de estampados (desde capa, lienzo o imagen) y relleno en cuadrícula, media gota, ladrillo o espejo con escala, rotación, separación y desplazamiento; queda recortado a la prenda. |
-| Colorways | Detecta los colores de la prenda, los sustituye conservando sombras y textura, guarda variantes y genera un tablero comparativo con HEX. |
-| Medidas | Cotas técnicas en cm o pulgadas según los ppp o calibradas con una medida real. |
-| Ajustar a tela (mockup) | Deforma un diseño según los pliegues de una foto de prenda y añade una capa de sombras de la tela. |
-| Ficha técnica | Tech pack en PDF (A4 apaisado, 2 páginas): plano, colores con HEX/CMYK, tejido, composición, gramaje, fornituras, tabla de medidas por talla y notas de confección. |
+| Rellenar con estampado | Biblioteca de estampados (desde capa, lienzo o imagen) en cuadrícula, media gota, ladrillo o espejo, con escala, rotación, separación y desplazamiento, recortado a la prenda. |
+| Colorways | Detecta los colores de la prenda, los sustituye conservando sombras y textura, guarda variantes y genera un tablero comparativo. |
+| Medidas | Cotas técnicas en cm o pulgadas, según los ppp o calibradas con una medida real. |
+| Ajustar a tela (mockup) | Deforma un diseño según los pliegues de una foto de prenda y añade una capa de sombras. |
+| Ficha técnica | Tech pack en PDF (A4 apaisado, 2 páginas) con plano, colores HEX/CMYK, tejido, fornituras, tabla de medidas y notas. |
+
+Los planos son dibujo vectorial propio de Atelier: ninguna plantilla de terceros se ha copiado ni incrustado.
