@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-19T14:56:25.275Z",
+  "generatedAt": "2026-09-20T00:00:00.000Z",
   "title": "Design System: Atelier",
   "extensions": {
     "colorMeta": {
@@ -8,16 +8,7 @@
         "role": "neutral",
         "displayName": "Grey Desk",
         "canonical": "oklch(45.4% 0.002 68)",
-        "tonalRamp": [
-          "#0c0b0a",
-          "#252423",
-          "#403f3f",
-          "#5e5d5c",
-          "#7e7d7c",
-          "#9f9e9d",
-          "#c5c4c3",
-          "#efeeed"
-        ],
+        "tonalRamp": ["#0c0b0a", "#252423", "#403f3f", "#5e5d5c", "#7e7d7c", "#9f9e9d", "#c5c4c3", "#efeeed"],
         "purpose": "Editor background under the canvas sheet.",
         "lightTheme": "#9d9b97"
       },
@@ -25,152 +16,95 @@
         "role": "neutral",
         "displayName": "Deep Desk",
         "canonical": "oklch(29.0% 0.002 68)",
-        "tonalRamp": [
-          "#0c0b0a",
-          "#252423",
-          "#403f3e",
-          "#5e5d5c",
-          "#7e7d7c",
-          "#9f9e9d",
-          "#c5c4c2",
-          "#efeeed"
-        ],
-        "purpose": "Gallery background and header. CSS var --desk-2.",
+        "tonalRamp": ["#0c0b0a", "#252423", "#403f3e", "#5e5d5c", "#7e7d7c", "#9f9e9d", "#c5c4c2", "#efeeed"],
+        "purpose": "Gallery background and its 64px header. CSS var --desk-2.",
         "lightTheme": "#e6e4df"
       },
       "chrome": {
         "role": "neutral",
-        "displayName": "Graphite Chrome",
-        "canonical": "oklch(20.5% 0.003 68)",
-        "tonalRamp": [
-          "#0c0b0a",
-          "#252423",
-          "#413f3e",
-          "#5e5d5c",
-          "#7e7d7c",
-          "#9f9e9d",
-          "#c5c4c2",
-          "#f0eeed"
-        ],
-        "purpose": "rgba(24, 23, 22, 0.78) with 18px backdrop blur: top bar, sidebar, bottom bars, timeline.",
-        "lightTheme": "rgba(250, 249, 246, 0.84)"
+        "displayName": "Glass Chrome",
+        "canonical": "oklch(21.5% 0.003 68)",
+        "tonalRamp": ["#0c0b0a", "#252423", "#413f3e", "#5e5d5c", "#7e7d7c", "#9f9e9d", "#c5c4c2", "#f0eeed"],
+        "purpose": "rgba(26, 25, 24, 0.64) under blur(32px) saturate(180%): top bar, sidebar, bottom bars, timeline, gallery header.",
+        "lightTheme": "rgba(252, 251, 249, 0.68)"
       },
       "chrome-solid": {
         "role": "neutral",
         "displayName": "Solid Graphite",
-        "canonical": "oklch(22.3% 0.002 68)",
-        "tonalRamp": [
-          "#0c0b0a",
-          "#252423",
-          "#413f3e",
-          "#5e5d5c",
-          "#7e7d7c",
-          "#9f9e9d",
-          "#c5c4c2",
-          "#efeeed"
-        ],
-        "purpose": "Selected segment, colour-well ring, icon on checked box.",
-        "lightTheme": "#f6f5f2"
+        "canonical": "oklch(21.5% 0.003 68)",
+        "tonalRamp": ["#0c0b0a", "#252423", "#413f3e", "#5e5d5c", "#7e7d7c", "#9f9e9d", "#c5c4c2", "#efeeed"],
+        "purpose": "Colour-well ring, icon on a checked visibility box, and the opaque substitute for every glass surface under prefers-reduced-transparency or prefers-contrast: more.",
+        "lightTheme": "#fbfaf8"
       },
       "sheet": {
         "role": "neutral",
         "displayName": "Sheet",
-        "canonical": "oklch(23.1% 0.002 68)",
-        "tonalRamp": [
-          "#0c0b0a",
-          "#252423",
-          "#413f3e",
-          "#5e5d5c",
-          "#7e7d7c",
-          "#9f9e9d",
-          "#c5c4c2",
-          "#efeeed"
-        ],
-        "purpose": "rgba(30, 29, 28, 0.94): popovers, dialogs, panels, bubbles, toasts.",
-        "lightTheme": "rgba(250, 249, 246, 0.96)"
+        "canonical": "oklch(24.3% 0.002 68)",
+        "tonalRamp": ["#0c0b0a", "#252423", "#413f3e", "#5e5d5c", "#7e7d7c", "#9f9e9d", "#c5c4c2", "#efeeed"],
+        "purpose": "rgba(32, 31, 30, 0.80) under the glass backdrop: popovers, dialogs, adjustment and pattern panels, bubbles, toasts.",
+        "lightTheme": "rgba(252, 251, 249, 0.86)"
       },
       "sheet-raised": {
         "role": "neutral",
         "displayName": "Raised Sheet",
-        "canonical": "oklch(26.5% 0.002 68)",
-        "tonalRamp": [
-          "#0c0b0a",
-          "#252423",
-          "#413f3e",
-          "#5e5d5c",
-          "#7e7d7c",
-          "#9f9e9d",
-          "#c5c4c2",
-          "#efeeed"
-        ],
-        "purpose": "Raised fill inside sheets. CSS var --sheet-2.",
-        "lightTheme": "#efeee9"
+        "canonical": "rgba(255, 255, 255, 0.06)",
+        "tonalRamp": ["#0b0b0b", "#242424", "#404040", "#5d5d5d", "#7d7d7d", "#9e9e9e", "#c4c4c4", "#eeeeee"],
+        "purpose": "6% white raised area inside sheets. CSS var --sheet-2.",
+        "lightTheme": "rgba(0, 0, 0, 0.04)"
       },
       "sheet-control": {
         "role": "neutral",
         "displayName": "Control Sheet",
-        "canonical": "oklch(30.5% 0.004 85)",
-        "tonalRamp": [
-          "#0c0b09",
-          "#252422",
-          "#41403d",
-          "#5e5d5b",
-          "#7e7d7b",
-          "#9f9e9c",
-          "#c5c4c1",
-          "#f0eeec"
-        ],
-        "purpose": "Buttons, fields, segmented track, blend chips. CSS var --sheet-3.",
-        "lightTheme": "#e4e2dc"
+        "canonical": "rgba(255, 255, 255, 0.08)",
+        "tonalRamp": ["#0b0b0b", "#242424", "#404040", "#5d5d5d", "#7d7d7d", "#9e9e9e", "#c4c4c4", "#eeeeee"],
+        "purpose": "8% white fill for small controls: blend chips, thumbnail backing. CSS var --sheet-3.",
+        "lightTheme": "rgba(0, 0, 0, 0.06)"
+      },
+      "track": {
+        "role": "neutral",
+        "displayName": "Track",
+        "canonical": "rgba(255, 255, 255, 0.07)",
+        "tonalRamp": ["#0b0b0b", "#242424", "#404040", "#5d5d5d", "#7d7d7d", "#9e9e9e", "#c4c4c4", "#eeeeee"],
+        "purpose": "7% white: segmented track, fields, the status chip. Shipped as a literal in styles.css with no light-theme counterpart on the status chip; treat --sheet-3 as its themed source.",
+        "lightTheme": "rgba(0, 0, 0, 0.06)"
+      },
+      "fill-raised": {
+        "role": "neutral",
+        "displayName": "Raised Fill",
+        "canonical": "rgba(255, 255, 255, 0.09)",
+        "tonalRamp": ["#0b0b0b", "#242424", "#404040", "#5d5d5d", "#7d7d7d", "#9e9e9e", "#c4c4c4", "#eeeeee"],
+        "purpose": "9% white: resting buttons, menu-row and ghost hover. Tool and icon hovers ship a near-identical 10%.",
+        "lightTheme": "rgba(0, 0, 0, 0.06)"
+      },
+      "fill-strong": {
+        "role": "neutral",
+        "displayName": "Strong Fill",
+        "canonical": "rgba(255, 255, 255, 0.15)",
+        "tonalRamp": ["#0b0b0b", "#242424", "#404040", "#5d5d5d", "#7d7d7d", "#9e9e9e", "#c4c4c4", "#eeeeee"],
+        "purpose": "15% white button hover; the selected segment ships 16% and the selected brush category 12%.",
+        "lightTheme": "rgba(0, 0, 0, 0.1)"
       },
       "line": {
         "role": "neutral",
         "displayName": "Hairline",
-        "canonical": "oklch(100.0% 0.000 90)",
-        "tonalRamp": [
-          "#0b0b0b",
-          "#242424",
-          "#404040",
-          "#5d5d5d",
-          "#7d7d7d",
-          "#9e9e9e",
-          "#c4c4c4",
-          "#eeeeee"
-        ],
-        "purpose": "rgba(255,255,255,0.09): 1px borders, dividers, quiet hover fills.",
-        "lightTheme": "rgba(0, 0, 0, 0.09)"
+        "canonical": "rgba(255, 255, 255, 0.08)",
+        "tonalRamp": ["#0b0b0b", "#242424", "#404040", "#5d5d5d", "#7d7d7d", "#9e9e9e", "#c4c4c4", "#eeeeee"],
+        "purpose": "Dividers, quiet borders, the brush-category column rule.",
+        "lightTheme": "rgba(0, 0, 0, 0.08)"
       },
       "line-strong": {
         "role": "neutral",
         "displayName": "Strong Hairline",
-        "canonical": "oklch(100.0% 0.000 90)",
-        "tonalRamp": [
-          "#0b0b0b",
-          "#242424",
-          "#404040",
-          "#5d5d5d",
-          "#7d7d7d",
-          "#9e9e9e",
-          "#c4c4c4",
-          "#eeeeee"
-        ],
-        "purpose": "rgba(255,255,255,0.16): slider tracks, separators, thumbnail rings. CSS var --line-2.",
-        "lightTheme": "rgba(0, 0, 0, 0.16)"
+        "canonical": "rgba(255, 255, 255, 0.15)",
+        "tonalRamp": ["#0b0b0b", "#242424", "#404040", "#5d5d5d", "#7d7d7d", "#9e9e9e", "#c4c4c4", "#eeeeee"],
+        "purpose": "The 0.5px border of every floating surface, slider tracks, separators, thumbnail rings. CSS var --line-2.",
+        "lightTheme": "rgba(0, 0, 0, 0.14)"
       },
       "ink": {
         "role": "neutral",
         "displayName": "Ink",
         "canonical": "oklch(95.5% 0.005 95)",
-        "tonalRamp": [
-          "#0c0b09",
-          "#252421",
-          "#40403d",
-          "#5e5e5a",
-          "#7e7d7a",
-          "#9f9e9b",
-          "#c5c4c0",
-          "#efeeea"
-        ],
+        "tonalRamp": ["#0c0b09", "#252421", "#40403d", "#5e5e5a", "#7e7d7a", "#9f9e9b", "#c5c4c0", "#efeeea"],
         "purpose": "Primary text and active icons.",
         "lightTheme": "#1d1c1a"
       },
@@ -178,118 +112,62 @@
         "role": "neutral",
         "displayName": "Ink 72",
         "canonical": "oklch(95.5% 0.005 95)",
-        "tonalRamp": [
-          "#0c0b09",
-          "#252421",
-          "#40403d",
-          "#5e5e5a",
-          "#7e7d7a",
-          "#9f9e9b",
-          "#c5c4c0",
-          "#efeeea"
-        ],
-        "purpose": "Resting icons, secondary text. CSS var --ink-2.",
+        "tonalRamp": ["#0c0b09", "#252421", "#40403d", "#5e5e5a", "#7e7d7a", "#9f9e9b", "#c5c4c0", "#efeeea"],
+        "purpose": "Resting icons, secondary text. CSS var --ink-2; raised to 0.9 under prefers-contrast: more.",
         "lightTheme": "rgba(29, 28, 26, 0.72)"
       },
       "ink-tertiary": {
         "role": "neutral",
         "displayName": "Ink 60",
         "canonical": "oklch(95.5% 0.005 95)",
-        "tonalRamp": [
-          "#0c0b09",
-          "#252421",
-          "#40403d",
-          "#5e5e5a",
-          "#7e7d7a",
-          "#9f9e9b",
-          "#c5c4c0",
-          "#efeeea"
-        ],
-        "purpose": "Labels, meta, units, ticks. CSS var --ink-3. The light-theme value measures about 3.4:1 on the light sheet at 11-12px: a known contrast defect in the build, not a sanctioned value.",
-        "lightTheme": "rgba(29, 28, 26, 0.52)"
+        "tonalRamp": ["#0c0b09", "#252421", "#40403d", "#5e5e5a", "#7e7d7a", "#9f9e9b", "#c5c4c0", "#efeeea"],
+        "purpose": "Labels, meta, units, ticks. CSS var --ink-3; raised to 0.75 under prefers-contrast: more.",
+        "lightTheme": "rgba(29, 28, 26, 0.64)"
       },
       "chalk": {
         "role": "primary",
         "displayName": "Tailor's Chalk",
         "canonical": "oklch(86.0% 0.141 98)",
-        "tonalRamp": [
-          "#1b0400",
-          "#361f00",
-          "#543d00",
-          "#735c00",
-          "#937d00",
-          "#b59e16",
-          "#dcc54c",
-          "#fff07a"
-        ],
-        "purpose": "The only accent: active, selected, primary.",
+        "tonalRamp": ["#1b0400", "#361f00", "#543d00", "#735c00", "#937d00", "#b59e16", "#dcc54c", "#fff07a"],
+        "purpose": "The only accent: active, selected, primary, and the dashed fashion guides.",
         "lightTheme": "#b8981a"
       },
       "chalk-ink": {
         "role": "primary",
         "displayName": "Chalk Ink",
         "canonical": "oklch(21.7% 0.019 98)",
-        "tonalRamp": [
-          "#0d0b04",
-          "#26241a",
-          "#424035",
-          "#605e52",
-          "#807e71",
-          "#a19f92",
-          "#c7c4b7",
-          "#f1efe1"
-        ],
+        "tonalRamp": ["#0d0b04", "#26241a", "#424035", "#605e52", "#807e71", "#a19f92", "#c7c4b7", "#f1efe1"],
         "purpose": "Text on chalk fills.",
         "lightTheme": "#ffffff"
       },
       "chalk-soft": {
         "role": "primary",
         "displayName": "Chalk Wash",
-        "canonical": "oklch(86.0% 0.141 98)",
-        "tonalRamp": [
-          "#1b0400",
-          "#361f00",
-          "#543d00",
-          "#735c00",
-          "#937d00",
-          "#b59e16",
-          "#dcc54c",
-          "#fff07a"
-        ],
-        "purpose": "rgba(233,210,90,0.16): selected row/brush/tool wash.",
+        "canonical": "rgba(233, 210, 90, 0.16)",
+        "tonalRamp": ["#1b0400", "#361f00", "#543d00", "#735c00", "#937d00", "#b59e16", "#dcc54c", "#fff07a"],
+        "purpose": "16% chalk behind an active top-bar or bottom-bar tool, with a 40-42% chalk inset ring.",
         "lightTheme": "rgba(184, 152, 26, 0.16)"
+      },
+      "chalk-tint": {
+        "role": "primary",
+        "displayName": "Chalk Tint",
+        "canonical": "color-mix(in srgb, #e9d25a 12%, transparent)",
+        "tonalRamp": ["#1b0400", "#361f00", "#543d00", "#735c00", "#937d00", "#b59e16", "#dcc54c", "#fff07a"],
+        "purpose": "10-12% chalk behind a selected layer (12%) or brush (10%), with a 38% chalk inset ring."
       },
       "danger": {
         "role": "secondary",
         "displayName": "Kiln Red",
         "canonical": "oklch(68.4% 0.167 29)",
-        "tonalRamp": [
-          "#320000",
-          "#550000",
-          "#790e0b",
-          "#9d362c",
-          "#c2574b",
-          "#e8796b",
-          "#ff9f8f",
-          "#ffc9b8"
-        ],
+        "tonalRamp": ["#320000", "#550000", "#790e0b", "#9d362c", "#c2574b", "#e8796b", "#ff9f8f", "#ffc9b8"],
         "purpose": "Destructive text/icons only."
       },
-      "focus": {
+      "blue": {
         "role": "secondary",
-        "displayName": "Clear-Sky Focus",
-        "canonical": "oklch(79.9% 0.103 254)",
-        "tonalRamp": [
-          "#000334",
-          "#002254",
-          "#104074",
-          "#315f96",
-          "#5080b9",
-          "#71a1de",
-          "#95c8ff",
-          "#bff3ff"
-        ],
-        "purpose": "Keyboard focus outline."
+        "displayName": "System Blue",
+        "canonical": "oklch(62.2% 0.211 258)",
+        "tonalRamp": ["#001233", "#002a5c", "#004389", "#005eb8", "#0a7ae4", "#4f98ff", "#8db8ff", "#c9dcff"],
+        "purpose": "Keyboard focus only: a 3.5px halo at 55% (45% on fields). CSS var --blue; it superseded --focus (#8fc1ff), which is still declared but never wins."
       }
     },
     "cssVariables": {
@@ -299,83 +177,102 @@
       "line-strong": "--line-2",
       "ink-secondary": "--ink-2",
       "ink-tertiary": "--ink-3",
-      "rounded.md": "--radius",
-      "rounded.sm": "--radius-s",
+      "blue": "--blue",
+      "rounded.sheet": "--radius",
+      "rounded.control": "--radius-s",
       "spacing.bar-height": "--bar-h"
     },
     "typographyMeta": {
       "headline": {
         "displayName": "Headline",
-        "purpose": "Sheet titles; dialogs step to 18px, the gallery empty state to 30px."
+        "purpose": "Sheet titles at 18px/680; dialogs step to 21px/-0.024em, the gallery empty state to 30px."
       },
-      "title": {
-        "displayName": "Title",
-        "purpose": "Layer, brush and artwork names."
-      },
-      "body": {
-        "displayName": "Body",
-        "purpose": "Default UI text."
-      },
+      "title": { "displayName": "Title", "purpose": "Layer, brush and artwork names." },
+      "body": { "displayName": "Body", "purpose": "Default UI text and menu rows; -0.005em body-wide." },
       "control": {
         "displayName": "Control",
-        "purpose": "Segmented options, bottom-bar buttons, brush categories."
+        "purpose": "Buttons at 590/14px; segments 580/13px, bottom bars 570/13px, status chip 550/12.5px, toasts 560."
       },
-      "label": {
-        "displayName": "Label",
-        "purpose": "Sentence-case field and section labels in Ink 60."
-      },
-      "numeric": {
-        "displayName": "Numeric",
-        "purpose": "Slider values, dimensions, percentages; always tabular."
-      }
+      "label": { "displayName": "Label", "purpose": "Sentence-case field, section and table labels in Ink 60." },
+      "numeric": { "displayName": "Numeric", "purpose": "Slider values, dimensions, percentages, measurements; always tabular." }
     },
     "shadows": [
       {
         "name": "sheet-lift",
-        "value": "0 18px 50px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.3)",
-        "purpose": "Popovers, dialogs, panels, bubbles, toasts. Light theme: 0 18px 50px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.1)."
+        "value": "0 24px 64px rgba(0, 0, 0, 0.46), 0 2px 10px rgba(0, 0, 0, 0.3)",
+        "purpose": "Popovers, dialogs, panels, floating windows, toasts. Light theme: 0 24px 64px rgba(0,0,0,0.16), 0 2px 10px rgba(0,0,0,0.08). CSS var --shadow."
       },
       {
-        "name": "chrome-float-sidebar",
-        "value": "0 6px 24px rgba(0, 0, 0, 0.25)",
-        "purpose": "Floating pill sidebar."
+        "name": "glass-edge",
+        "value": "inset 0 0.5px 0 rgba(255, 255, 255, 0.10)",
+        "purpose": "The top highlight every glass surface carries; the sidebar uses 0.12."
       },
       {
-        "name": "chrome-float-bar",
-        "value": "0 8px 30px rgba(0, 0, 0, 0.3)",
-        "purpose": "Contextual bottom tool bars."
+        "name": "bar-ambient-top",
+        "value": "0 1px 12px rgba(0, 0, 0, 0.22)",
+        "purpose": "Top bar, which has no border at all."
+      },
+      {
+        "name": "bar-ambient-sidebar",
+        "value": "0 12px 36px rgba(0, 0, 0, 0.3)",
+        "purpose": "Floating sidebar rail."
       },
       {
         "name": "paper-cast",
-        "value": "0 10px 28px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3)",
-        "purpose": "Gallery artwork; the editor canvas draws the same cast."
+        "value": "0 14px 34px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3)",
+        "purpose": "Gallery artwork; hover deepens to 0 22px 48px rgba(0,0,0,0.48), 0 2px 6px rgba(0,0,0,0.3)."
       },
       {
         "name": "knob",
-        "value": "0 1px 4px rgba(0, 0, 0, 0.45)",
+        "value": "0 1px 4px rgba(0, 0, 0, 0.45), 0 0 0 0.5px rgba(0, 0, 0, 0.25)",
         "purpose": "Slider thumbs."
       },
       {
         "name": "segment-selected",
-        "value": "0 1px 3px rgba(0, 0, 0, 0.25)",
+        "value": "0 1px 2px rgba(0, 0, 0, 0.28), inset 0 0.5px 0 rgba(255, 255, 255, 0.25)",
         "purpose": "Selected segmented option."
+      },
+      {
+        "name": "chalk-ring-active",
+        "value": "inset 0 0 0 1px color-mix(in srgb, #e9d25a 40%, transparent)",
+        "purpose": "Active top-bar tool (40%) and bottom-bar button (42%) over the Chalk Wash."
+      },
+      {
+        "name": "chalk-ring-row",
+        "value": "inset 0 0 0 1px color-mix(in srgb, #e9d25a 38%, transparent)",
+        "purpose": "Selected layer or brush row over the Chalk Tint."
+      },
+      {
+        "name": "focus-halo",
+        "value": "0 0 0 3.5px color-mix(in srgb, #0a84ff 55%, transparent)",
+        "purpose": "Keyboard focus, 8px radius, no outline; fields use 45%."
       }
     ],
     "motion": [
       {
-        "name": "ease",
-        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
-        "purpose": "House ease: entrances, chrome show/hide, switch knob, artwork lift."
+        "name": "ease-sheet",
+        "value": "cubic-bezier(0.32, 0.72, 0, 1)",
+        "purpose": "House curve: sheet and bar entrances, dialogs, toasts, switch knob, slider thumbs, artwork hover."
       },
       {
-        "name": "pop-in",
-        "value": "0.22s; opacity 0, translateY(-6px) scale(0.985) to rest",
-        "purpose": "Popovers; toasts 0.2s, dialogs 0.25s."
+        "name": "material-in",
+        "value": "0.3s ease-sheet; opacity 0, translateY(-10px) scale(0.965) blur(4px) to rest",
+        "purpose": "Popovers; dialogs 0.32s, toasts 0.26s."
       },
       {
-        "name": "rise",
-        "value": "0.25s; opacity 0, translateY(10px) to rest",
-        "purpose": "Bottom bars and adjustment panel."
+        "name": "rise-sheet",
+        "value": "0.34s ease-sheet; opacity 0, translate(-50%, 16px) scale(0.98) to rest",
+        "purpose": "Bottom bars, adjustment and pattern panels."
+      },
+      {
+        "name": "press",
+        "value": "transform 0.12s ease-out; scale 0.965 buttons/segments, 0.9 icon tools, 0.995 rows",
+        "purpose": "Pointer-down feedback on every tappable element."
+      },
+      {
+        "name": "hover",
+        "value": "background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease",
+        "purpose": "Control hover."
       },
       {
         "name": "chrome-hide",
@@ -383,38 +280,34 @@
         "purpose": "Hiding/showing the top bar and sidebar."
       },
       {
-        "name": "hover",
-        "value": "background 0.15s, color 0.15s",
-        "purpose": "Control hover."
+        "name": "artwork-hover",
+        "value": "transform 0.4s ease-sheet; translateY(-6px) scale(1.015)",
+        "purpose": "Gallery card lift."
       },
       {
         "name": "reduced-motion",
-        "value": "durations 0.01ms",
+        "value": "entrances collapse to fade 0.18s; artwork hover transform removed",
         "purpose": "prefers-reduced-motion: reduce."
       }
     ],
     "breakpoints": [
-      {
-        "name": "compact",
-        "value": "700px"
-      }
+      { "name": "chip-drop", "value": "1100px" },
+      { "name": "compact", "value": "700px" },
+      { "name": "narrow", "value": "560px" },
+      { "name": "tight", "value": "480px" }
     ],
     "blur": [
+      { "name": "glass", "value": "blur(32px) saturate(180%)" },
+      { "name": "dialog-scrim", "value": "blur(4px) over rgba(0, 0, 0, 0.38)" }
+    ],
+    "accessibility": [
       {
-        "name": "chrome",
-        "value": "blur(18px) saturate(1.2)"
+        "name": "prefers-reduced-transparency",
+        "value": "backdrop-filter removed; every glass surface falls back to --chrome-solid"
       },
       {
-        "name": "panel",
-        "value": "blur(20px)"
-      },
-      {
-        "name": "sheet",
-        "value": "blur(24px)"
-      },
-      {
-        "name": "gallery-header",
-        "value": "blur(16px)"
+        "name": "prefers-contrast: more",
+        "value": "--line 0.24, --line-2 0.4, --ink-2 0.9, --ink-3 0.75; bars, sheets and dialogs go opaque"
       }
     ]
   },
@@ -423,9 +316,9 @@
       "name": "Button",
       "kind": "button",
       "refersTo": "button",
-      "description": "Default action button inside sheets and dialogs.",
+      "description": "Default action button inside sheets, panels and dialogs.",
       "html": "<button class=\"ds-btn\">Duplicar</button>",
-      "css": ".ds-btn{height:34px;padding:0 14px;border-radius:9px;background:var(--sheet-3,#302f2d);color:var(--ink,#f1f0ec);font:550 14px/1.4 var(--font, system-ui);border:0;display:inline-flex;align-items:center;gap:7px;cursor:pointer;transition:background .15s,transform .1s}.ds-btn:hover{background:var(--line-2,rgba(255,255,255,.16))}.ds-btn:active{transform:scale(.98)}.ds-btn:focus-visible{outline:2px solid var(--focus,#8fc1ff);outline-offset:2px}"
+      "css": ".ds-btn{height:34px;padding:0 14px;border-radius:10px;background:rgba(255,255,255,.09);color:var(--ink,#f1f0ec);font:590 14px/1.4 var(--font, system-ui);letter-spacing:-.01em;border:0;display:inline-flex;align-items:center;gap:7px;cursor:pointer;transition:background .16s ease,transform .12s ease-out}.ds-btn:hover{background:rgba(255,255,255,.15)}.ds-btn:active{transform:scale(.965)}.ds-btn:focus-visible{outline:none;box-shadow:0 0 0 3.5px color-mix(in srgb, #0a84ff 55%, transparent)}"
     },
     {
       "name": "Primary Button",
@@ -433,80 +326,89 @@
       "refersTo": "button-primary",
       "description": "The single chalk action on a surface.",
       "html": "<button class=\"ds-btn-primary\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M12 5v14M5 12h14\"/></svg>Nuevo</button>",
-      "css": ".ds-btn-primary{height:34px;padding:0 14px;border-radius:9px;background:var(--chalk,#e9d25a);color:var(--chalk-ink,#1c1a10);font:550 14px/1.4 var(--font, system-ui);border:0;display:inline-flex;align-items:center;gap:7px;cursor:pointer;transition:filter .15s,transform .1s}.ds-btn-primary:hover{filter:brightness(1.06)}.ds-btn-primary:active{transform:scale(.98)}.ds-btn-primary:focus-visible{outline:2px solid var(--focus,#8fc1ff);outline-offset:2px}"
+      "css": ".ds-btn-primary{height:34px;padding:0 14px;border-radius:10px;background:var(--chalk,#e9d25a);color:var(--chalk-ink,#1c1a10);font:590 14px/1.4 var(--font, system-ui);letter-spacing:-.01em;border:0;display:inline-flex;align-items:center;gap:7px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:filter .16s ease,transform .12s ease-out}.ds-btn-primary:hover{filter:brightness(1.06)}.ds-btn-primary:active{transform:scale(.965)}.ds-btn-primary:focus-visible{outline:none;box-shadow:0 0 0 3.5px color-mix(in srgb, #0a84ff 55%, transparent)}"
     },
     {
       "name": "Top Bar",
       "kind": "nav",
       "refersTo": "tool-button",
-      "description": "46px translucent graphite bar; the active tool gets a chalk underline.",
-      "html": "<div class=\"ds-topbar\"><button class=\"ds-tb ds-tb-text\">Galería</button><button class=\"ds-tb\" aria-label=\"Selección\"><svg width=\"19\" height=\"19\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"2\" stroke-dasharray=\"3 3\"/></svg></button><span style=\"flex:1\"></span><button class=\"ds-tb on\" aria-label=\"Pintar\"><svg width=\"19\" height=\"19\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M18 3l3 3-9 9-3-3z\"/><path d=\"M9 15c-3 0-5 1.5-5 4.5 0 .8-.6 1.5-1.5 1.5 2.5 1.5 7.5 1 8.5-2.5\"/></svg></button><span class=\"ds-well\"></span></div>",
-      "css": ".ds-topbar{height:46px;display:flex;align-items:center;gap:2px;padding:0 10px;background:var(--chrome,rgba(24,23,22,.78));backdrop-filter:blur(18px) saturate(1.2);border-bottom:1px solid var(--line,rgba(255,255,255,.09));font-family:var(--font, system-ui);color:var(--ink,#f1f0ec)}.ds-tb{position:relative;height:36px;min-width:38px;padding:0 9px;border-radius:9px;border:0;background:none;color:var(--ink-2,rgba(241,240,236,.72));display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,color .15s}.ds-tb:hover{background:var(--line,rgba(255,255,255,.09));color:var(--ink,#f1f0ec)}.ds-tb:focus-visible{outline:2px solid var(--focus,#8fc1ff);outline-offset:2px}.ds-tb.on{color:var(--ink,#f1f0ec)}.ds-tb.on::after{content:\"\";position:absolute;left:10px;right:10px;bottom:2px;height:2px;border-radius:2px;background:var(--chalk,#e9d25a)}.ds-tb-text{font:600 14px/1.4 var(--font, system-ui);letter-spacing:-.01em;color:var(--ink,#f1f0ec)}.ds-well{width:30px;height:30px;border-radius:50%;margin-left:6px;background:#7a3a1c;box-shadow:0 0 0 2px var(--chrome-solid,#1c1b1a),0 0 0 3.5px var(--line-2,rgba(255,255,255,.16))}"
+      "description": "48px glass bar with no border; the active tool takes a chalk wash and ring.",
+      "html": "<div class=\"ds-topbar\"><button class=\"ds-tb ds-tb-text\">Galería</button><button class=\"ds-tb\" aria-label=\"Selección\"><svg width=\"19\" height=\"19\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"2\" stroke-dasharray=\"3 3\"/></svg></button><button class=\"ds-tb on\" aria-label=\"Moda\"><svg width=\"19\" height=\"19\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linejoin=\"round\"><path d=\"M15 3l5 3-2 4-2-1v12H8V9L6 10 4 6l5-3a3 3 0 0 0 6 0z\"/></svg><span>Moda</span></button><span style=\"flex:1\"></span><span class=\"ds-well\"></span></div>",
+      "css": ".ds-topbar{height:48px;display:flex;align-items:center;gap:2px;padding:0 12px;background:var(--chrome,rgba(26,25,24,.64));backdrop-filter:blur(32px) saturate(180%);-webkit-backdrop-filter:blur(32px) saturate(180%);border-bottom:0;box-shadow:inset 0 .5px 0 rgba(255,255,255,.10),0 1px 12px rgba(0,0,0,.22);font-family:var(--font, system-ui);color:var(--ink,#f1f0ec)}.ds-tb{position:relative;height:36px;min-width:38px;padding:0 9px;border-radius:10px;border:0;background:none;color:var(--ink-2,rgba(241,240,236,.72));display:inline-flex;align-items:center;justify-content:center;gap:6px;font:400 14px/1.4 var(--font, system-ui);cursor:pointer;transition:background .16s ease,color .16s ease,transform .12s ease-out}.ds-tb:hover{background:rgba(255,255,255,.10);color:var(--ink,#f1f0ec)}.ds-tb:active{transform:scale(.9)}.ds-tb:focus-visible{outline:none;box-shadow:0 0 0 3.5px color-mix(in srgb, #0a84ff 55%, transparent)}.ds-tb.on{background:var(--chalk-soft,rgba(233,210,90,.16));color:var(--ink,#f1f0ec);box-shadow:inset 0 0 0 1px color-mix(in srgb, #e9d25a 40%, transparent)}.ds-tb-text{font-weight:600;letter-spacing:-.015em;color:var(--ink,#f1f0ec)}.ds-well{width:30px;height:30px;border-radius:50%;margin-left:6px;background:#7a3a1c;box-shadow:0 0 0 2px var(--chrome-solid,#1a1918),0 0 0 3.5px var(--line-2,rgba(255,255,255,.15))}"
+    },
+    {
+      "name": "Status Chip",
+      "kind": "chip",
+      "refersTo": "status-chip",
+      "description": "Centred top-bar readout of tool, brush, size and opacity; opens the brush library.",
+      "html": "<button class=\"ds-status\"><span class=\"dot\"></span><span>Pintar</span><span class=\"num\">· Pluma de estudio · 9 px · 100%</span></button>",
+      "css": ".ds-status{display:inline-flex;align-items:center;gap:8px;height:30px;padding:0 11px;border-radius:15px;border:0;background:rgba(255,255,255,.07);color:var(--ink-2,rgba(241,240,236,.72));font:550 12.5px/1 var(--font, system-ui);white-space:nowrap;max-width:280px;overflow:hidden;cursor:pointer;transition:background .16s ease,color .16s ease}.ds-status:hover{background:rgba(255,255,255,.12);color:var(--ink,#f1f0ec)}.ds-status:focus-visible{outline:none;box-shadow:0 0 0 3.5px color-mix(in srgb, #0a84ff 55%, transparent)}.ds-status .dot{width:8px;height:8px;border-radius:50%;background:var(--chalk,#e9d25a);flex:none}.ds-status .num{color:var(--ink-3,rgba(241,240,236,.6));font-variant-numeric:tabular-nums}"
     },
     {
       "name": "Bottom Tool Bar",
       "kind": "nav",
       "refersTo": "bar-button-active",
-      "description": "Contextual floating bar 14px above the bottom edge.",
+      "description": "Contextual glass bar floating 14px above the bottom edge.",
       "html": "<div class=\"ds-bb\"><button class=\"on\">Libre</button><button>Uniforme</button><button>Distorsionar</button><span class=\"ds-bb-sep\"></span><button>Restablecer</button></div>",
-      "css": ".ds-bb{display:inline-flex;align-items:center;gap:8px;padding:7px;border-radius:14px;background:var(--chrome,rgba(24,23,22,.78));border:1px solid var(--line,rgba(255,255,255,.09));backdrop-filter:blur(18px);box-shadow:0 8px 30px rgba(0,0,0,.3);font-family:var(--font, system-ui)}.ds-bb button{height:34px;padding:0 11px;border-radius:9px;border:0;background:none;color:var(--ink-2,rgba(241,240,236,.72));font:550 13px/1 var(--font, system-ui);cursor:pointer}.ds-bb button:hover{background:var(--line,rgba(255,255,255,.09));color:var(--ink,#f1f0ec)}.ds-bb button:focus-visible{outline:2px solid var(--focus,#8fc1ff);outline-offset:2px}.ds-bb button.on{background:var(--chalk-soft,rgba(233,210,90,.16));color:var(--ink,#f1f0ec);box-shadow:inset 0 -2px 0 var(--chalk,#e9d25a)}.ds-bb-sep{width:1px;height:22px;background:var(--line-2,rgba(255,255,255,.16))}"
+      "css": ".ds-bb{display:inline-flex;align-items:center;gap:6px;padding:8px;border-radius:18px;background:var(--chrome,rgba(26,25,24,.64));border:.5px solid var(--line-2,rgba(255,255,255,.15));backdrop-filter:blur(32px) saturate(180%);box-shadow:0 24px 64px rgba(0,0,0,.46),0 2px 10px rgba(0,0,0,.3),inset 0 .5px 0 rgba(255,255,255,.10);font-family:var(--font, system-ui)}.ds-bb button{height:34px;padding:0 11px;border-radius:10px;border:0;background:none;color:var(--ink-2,rgba(241,240,236,.72));font:570 13px/1 var(--font, system-ui);cursor:pointer;transition:background .16s ease,color .16s ease,transform .12s ease-out}.ds-bb button:hover{background:rgba(255,255,255,.10);color:var(--ink,#f1f0ec)}.ds-bb button:active{transform:scale(.965)}.ds-bb button:focus-visible{outline:none;box-shadow:0 0 0 3.5px color-mix(in srgb, #0a84ff 55%, transparent)}.ds-bb button.on{background:var(--chalk-soft,rgba(233,210,90,.16));color:var(--ink,#f1f0ec);box-shadow:inset 0 0 0 1px color-mix(in srgb, #e9d25a 42%, transparent)}.ds-bb-sep{width:1px;height:22px;background:var(--line-2,rgba(255,255,255,.15))}"
     },
     {
       "name": "Segmented Control",
       "kind": "chip",
       "refersTo": "segmented",
-      "description": "Mode switch inside sheets.",
-      "html": "<div class=\"ds-seg\"><button class=\"on\">Pincel</button><button>Borrador</button><button>Difuminar</button></div>",
-      "css": ".ds-seg{display:inline-flex;padding:3px;gap:2px;border-radius:10px;background:var(--sheet-3,#302f2d)}.ds-seg button{height:28px;padding:0 11px;border-radius:8px;border:0;background:none;color:var(--ink-2,rgba(241,240,236,.72));font:550 13px/1 var(--font, system-ui);cursor:pointer}.ds-seg button:hover{color:var(--ink,#f1f0ec)}.ds-seg button:focus-visible{outline:2px solid var(--focus,#8fc1ff);outline-offset:2px}.ds-seg button.on{background:var(--chrome-solid,#1c1b1a);color:var(--ink,#f1f0ec);box-shadow:0 1px 3px rgba(0,0,0,.25)}"
+      "description": "Mode switch inside sheets, panels and fashion dialogs.",
+      "html": "<div class=\"ds-seg\"><button class=\"on\">Delantero y espalda</button><button>Delantero</button><button>Espalda</button></div>",
+      "css": ".ds-seg{display:inline-flex;padding:2px;gap:2px;border-radius:11px;background:rgba(255,255,255,.07)}.ds-seg button{height:28px;padding:0 11px;border-radius:9px;border:0;background:none;color:var(--ink-2,rgba(241,240,236,.72));font:580 13px/1 var(--font, system-ui);cursor:pointer;transition:background .16s ease,color .16s ease,transform .12s ease-out}.ds-seg button:hover{color:var(--ink,#f1f0ec)}.ds-seg button:active{transform:scale(.965)}.ds-seg button:focus-visible{outline:none;box-shadow:0 0 0 3.5px color-mix(in srgb, #0a84ff 55%, transparent)}.ds-seg button.on{background:rgba(255,255,255,.16);color:var(--ink,#f1f0ec);box-shadow:0 1px 2px rgba(0,0,0,.28),inset 0 .5px 0 rgba(255,255,255,.25)}"
     },
     {
       "name": "Field",
       "kind": "input",
       "refersTo": "field",
-      "description": "Text/number field on a control sheet; chalk border on focus.",
+      "description": "Text/number field on a sheet; blue halo on focus.",
       "html": "<input class=\"ds-field\" value=\"Capa 2\" />",
-      "css": ".ds-field{height:34px;width:220px;padding:0 10px;border-radius:8px;background:var(--sheet-3,#302f2d);border:1px solid transparent;outline:none;color:var(--ink,#f1f0ec);caret-color:var(--chalk,#e9d25a);font:14px/1.4 var(--font, system-ui)}.ds-field:focus{border-color:var(--chalk,#e9d25a)}"
+      "css": ".ds-field{height:36px;width:220px;padding:0 10px;border-radius:10px;background:rgba(255,255,255,.07);border:.5px solid var(--line,rgba(255,255,255,.08));outline:none;color:var(--ink,#f1f0ec);caret-color:var(--chalk,#e9d25a);font:14px/1.4 var(--font, system-ui);letter-spacing:-.005em;transition:box-shadow .16s ease}.ds-field:focus{border-color:transparent;box-shadow:0 0 0 3.5px color-mix(in srgb, #0a84ff 45%, transparent)}"
     },
     {
       "name": "Measuring-Tape Slider",
       "kind": "custom",
       "refersTo": null,
-      "description": "Horizontal slider with 10% ticks and a tabular value.",
-      "html": "<div class=\"ds-hs\"><span class=\"n\">Opacidad</span><span class=\"v\">64%</span><div class=\"r\" tabindex=\"0\" role=\"slider\" aria-label=\"Opacidad\" aria-valuenow=\"64\"><div class=\"t\"></div><div class=\"f\" style=\"width:64%\"></div><div class=\"k\"></div><div class=\"th\" style=\"left:64%\"></div></div></div>",
-      "css": ".ds-hs{width:280px;display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center;font-family:var(--font, system-ui)}.ds-hs .n{font-size:13px;color:var(--ink-2,rgba(241,240,236,.72))}.ds-hs .v{font-size:12px;color:var(--ink-3,rgba(241,240,236,.6));font-variant-numeric:tabular-nums;min-width:42px;text-align:right}.ds-hs .r{grid-column:1/-1;position:relative;height:26px;cursor:ew-resize;border-radius:4px}.ds-hs .r:focus-visible{outline:2px solid var(--focus,#8fc1ff);outline-offset:2px}.ds-hs .t{position:absolute;left:0;right:0;top:11px;height:4px;border-radius:2px;background:var(--line-2,rgba(255,255,255,.16))}.ds-hs .f{position:absolute;left:0;top:11px;height:4px;border-radius:2px;background:var(--ink-2,rgba(241,240,236,.72))}.ds-hs .k{position:absolute;left:0;right:0;top:18px;height:5px;opacity:.5;background:linear-gradient(to right,var(--ink-3,rgba(241,240,236,.6)) 0 1px,transparent 1px) 0 0/10% 100%;border-right:1px solid var(--ink-3,rgba(241,240,236,.6))}.ds-hs .th{position:absolute;top:5px;width:16px;height:16px;border-radius:50%;background:var(--ink,#f1f0ec);transform:translateX(-50%);box-shadow:0 1px 4px rgba(0,0,0,.45)}"
+      "description": "Horizontal slider with 10% ticks, a tabular value and a thumb that swells while dragging.",
+      "html": "<div class=\"ds-hs\"><span class=\"n\">Escala</span><span class=\"v\">35%</span><div class=\"r\" tabindex=\"0\" role=\"slider\" aria-label=\"Escala\" aria-valuenow=\"35\"><div class=\"t\"></div><div class=\"f\" style=\"width:35%\"></div><div class=\"k\"></div><div class=\"th\" style=\"left:35%\"></div></div></div>",
+      "css": ".ds-hs{width:280px;display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center;font-family:var(--font, system-ui)}.ds-hs .n{font-size:13px;color:var(--ink-2,rgba(241,240,236,.72))}.ds-hs .v{font-size:12px;color:var(--ink-3,rgba(241,240,236,.6));font-variant-numeric:tabular-nums;min-width:42px;text-align:right}.ds-hs .r{grid-column:1/-1;position:relative;height:26px;cursor:ew-resize;border-radius:4px}.ds-hs .r:focus-visible{outline:none;box-shadow:0 0 0 3.5px color-mix(in srgb, #0a84ff 55%, transparent)}.ds-hs .t{position:absolute;left:0;right:0;top:10.5px;height:5px;border-radius:3px;background:var(--line-2,rgba(255,255,255,.15))}.ds-hs .f{position:absolute;left:0;top:10.5px;height:5px;border-radius:3px;background:var(--ink-2,rgba(241,240,236,.72))}.ds-hs .k{position:absolute;left:0;right:0;top:18px;height:5px;opacity:.5;background:linear-gradient(to right,var(--ink-3,rgba(241,240,236,.6)) 0 1px,transparent 1px) 0 0/10% 100%;border-right:1px solid var(--ink-3,rgba(241,240,236,.6))}.ds-hs .th{position:absolute;top:4px;width:18px;height:18px;border-radius:50%;background:var(--ink,#f1f0ec);transform:translateX(-50%);box-shadow:0 1px 4px rgba(0,0,0,.45),0 0 0 .5px rgba(0,0,0,.25);transition:transform .16s cubic-bezier(.32,.72,0,1)}.ds-hs .r:active .th{transform:translateX(-50%) scale(1.14)}"
     },
     {
       "name": "Popover Sheet",
       "kind": "card",
       "refersTo": "popover",
-      "description": "Dark rounded sheet with pointer notch, dropped from the top bar; selected row in chalk wash.",
-      "html": "<div class=\"ds-pop\"><span class=\"ds-notch\"></span><div class=\"ds-pop-head\"><span>Capas</span><button aria-label=\"Añadir capa\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M12 5v14M5 12h14\"/></svg></button></div><div class=\"ds-row on\"><span class=\"ds-th\"></span>Capa 2</div><div class=\"ds-row\"><span class=\"ds-th\"></span>Capa 1</div></div>",
-      "css": ".ds-pop{position:relative;width:320px;margin-top:10px;background:var(--sheet,rgba(30,29,28,.94));border:1px solid var(--line,rgba(255,255,255,.09));border-radius:12px;box-shadow:0 18px 50px rgba(0,0,0,.45),0 2px 8px rgba(0,0,0,.3);backdrop-filter:blur(24px);padding:0 8px 10px;color:var(--ink,#f1f0ec);font-family:var(--font, system-ui)}.ds-notch{position:absolute;top:-7px;right:40px;width:14px;height:14px;transform:rotate(45deg);background:var(--sheet,rgba(30,29,28,.94));border-left:1px solid var(--line-2,rgba(255,255,255,.16));border-top:1px solid var(--line-2,rgba(255,255,255,.16));border-radius:3px 0 0 0}.ds-pop-head{display:flex;justify-content:space-between;align-items:center;padding:12px 6px 8px;font-size:17px;font-weight:650;letter-spacing:-.015em}.ds-pop-head button{width:32px;height:32px;border-radius:8px;border:0;background:none;color:var(--ink-2,rgba(241,240,236,.72));display:inline-grid;place-items:center;cursor:pointer}.ds-pop-head button:hover{background:var(--line,rgba(255,255,255,.09));color:var(--ink,#f1f0ec)}.ds-pop-head button:focus-visible{outline:2px solid var(--focus,#8fc1ff);outline-offset:2px}.ds-row{display:flex;align-items:center;gap:10px;padding:6px 8px;margin:2px 0;border-radius:10px;font-size:13px;font-weight:600}.ds-row:hover{background:var(--line,rgba(255,255,255,.09))}.ds-row.on{background:var(--chalk-soft,rgba(233,210,90,.16));box-shadow:inset 0 0 0 1px rgba(233,210,90,.5)}.ds-th{width:52px;height:40px;border-radius:6px;box-shadow:0 0 0 1px var(--line-2,rgba(255,255,255,.16));background:repeating-conic-gradient(#d9d9d9 0 25%,#fff 0 50%) 0 0/10px 10px}"
+      "description": "Glass sheet with pointer notch dropped from the top bar; selected row in chalk tint.",
+      "html": "<div class=\"ds-pop\"><span class=\"ds-notch\"></span><div class=\"ds-pop-head\"><span>Capas</span><button aria-label=\"Añadir capa\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M12 5v14M5 12h14\"/></svg></button></div><div class=\"ds-row on\"><span class=\"ds-th\"></span>Color base<span class=\"ds-chip\">N</span></div><div class=\"ds-row\"><span class=\"ds-th\"></span>Capa 1<span class=\"ds-chip\">N</span></div></div>",
+      "css": ".ds-pop{position:relative;width:330px;margin-top:10px;background:var(--sheet,rgba(32,31,30,.80));border:.5px solid var(--line-2,rgba(255,255,255,.15));border-radius:18px;box-shadow:0 24px 64px rgba(0,0,0,.46),0 2px 10px rgba(0,0,0,.3),inset 0 .5px 0 rgba(255,255,255,.10);backdrop-filter:blur(32px) saturate(180%);padding:0 10px 12px;color:var(--ink,#f1f0ec);font-family:var(--font, system-ui);animation:ds-material-in .3s cubic-bezier(.32,.72,0,1);transform-origin:top center}@keyframes ds-material-in{from{opacity:0;transform:translateY(-10px) scale(.965);filter:blur(4px)}to{opacity:1;transform:none;filter:blur(0)}}.ds-notch{position:absolute;top:-7px;right:40px;width:14px;height:14px;transform:rotate(45deg);background:var(--sheet,rgba(32,31,30,.80));border-left:.5px solid var(--line-2,rgba(255,255,255,.15));border-top:.5px solid var(--line-2,rgba(255,255,255,.15));border-radius:3px 0 0 0}.ds-pop-head{display:flex;justify-content:space-between;align-items:center;padding:14px 16px 8px;font-size:18px;font-weight:680;letter-spacing:-.022em}.ds-pop-head button{width:32px;height:32px;border-radius:9px;border:0;background:none;color:var(--ink-2,rgba(241,240,236,.72));display:inline-grid;place-items:center;cursor:pointer;transition:background .16s ease,transform .12s ease-out}.ds-pop-head button:hover{background:rgba(255,255,255,.10);color:var(--ink,#f1f0ec)}.ds-pop-head button:active{transform:scale(.9)}.ds-row{display:flex;align-items:center;gap:12px;padding:8px;margin:2px 0;border-radius:12px;font-size:13px;font-weight:600;transition:background .16s ease,transform .12s ease-out}.ds-row:hover{background:rgba(255,255,255,.06)}.ds-row:active{transform:scale(.995)}.ds-row.on{background:color-mix(in srgb, #e9d25a 12%, transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb, #e9d25a 38%, transparent)}.ds-th{width:52px;height:40px;border-radius:8px;box-shadow:0 0 0 1px var(--line-2,rgba(255,255,255,.15));background:repeating-conic-gradient(#d9d9d9 0 25%,#fff 0 50%) 0 0/10px 10px}.ds-chip{margin-left:auto;height:26px;min-width:26px;border-radius:8px;background:rgba(255,255,255,.08);color:var(--ink-2,rgba(241,240,236,.72));font:650 12px/26px var(--font, system-ui);text-align:center}"
     },
     {
-      "name": "Switch Row",
-      "kind": "input",
-      "refersTo": null,
-      "description": "Full-width toggle row; chalk track when on.",
-      "html": "<button class=\"ds-check\" role=\"switch\" aria-checked=\"true\"><span>Interfaz clara</span><span class=\"ds-sw on\"></span></button>",
-      "css": ".ds-check{width:280px;display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:38px;padding:4px 10px;border-radius:9px;border:0;background:none;color:var(--ink,#f1f0ec);font:14px/1.4 var(--font, system-ui);cursor:pointer}.ds-check:hover{background:var(--line,rgba(255,255,255,.09))}.ds-check:focus-visible{outline:2px solid var(--focus,#8fc1ff);outline-offset:2px}.ds-sw{width:38px;height:22px;border-radius:11px;background:var(--line-2,rgba(255,255,255,.16));position:relative;transition:background .2s}.ds-sw::after{content:\"\";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3);transition:transform .2s cubic-bezier(.22,1,.36,1)}.ds-sw.on{background:var(--chalk,#e9d25a)}.ds-sw.on::after{transform:translateX(16px)}"
+      "name": "Fashion Menu Row",
+      "kind": "custom",
+      "refersTo": "menu-item",
+      "description": "Stacked menu row used by the Moda sheet: icon, label, description; the module's switches ride the same row shape.",
+      "html": "<div class=\"ds-fm\"><div class=\"ds-fm-lab\">Estampados</div><button class=\"ds-fm-item\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M17 2l4 4-4 4\"/><path d=\"M3 11V9a4 4 0 0 1 4-4h14\"/><path d=\"M7 22l-4-4 4-4\"/><path d=\"M21 13v2a4 4 0 0 1-4 4H3\"/></svg><span><span class=\"t\">Rellenar con estampado</span><span class=\"s\">Aplica un estampado repetido a la prenda o a una capa</span></span></button><button class=\"ds-fm-item\" role=\"switch\" aria-checked=\"true\"><span><span class=\"t\">Modo repetición</span><span class=\"s\">Pinta el módulo: los trazos continúan por el borde opuesto</span></span><span class=\"ds-sw on\"></span></button></div>",
+      "css": ".ds-fm{width:340px;font-family:var(--font, system-ui);color:var(--ink,#f1f0ec)}.ds-fm-lab{padding:2px 10px 4px;color:var(--ink-3,rgba(241,240,236,.6));font:590 12px/1.4 var(--font, system-ui);letter-spacing:.005em}.ds-fm-item{width:100%;min-height:44px;padding:8px 10px;border-radius:11px;border:0;background:none;color:inherit;display:flex;align-items:flex-start;gap:14px;text-align:left;font:400 14px/1.4 var(--font, system-ui);cursor:pointer;transition:background .16s ease,transform .12s ease-out}.ds-fm-item:hover{background:rgba(255,255,255,.09)}.ds-fm-item:active{transform:scale(.995)}.ds-fm-item:focus-visible{outline:none;box-shadow:0 0 0 3.5px color-mix(in srgb, #0a84ff 55%, transparent)}.ds-fm-item svg{color:var(--ink-2,rgba(241,240,236,.72));flex:none;margin-top:2px}.ds-fm-item span{display:flex;flex-direction:column}.ds-fm-item .s{color:var(--ink-3,rgba(241,240,236,.6));font-size:12px}.ds-sw{flex:none;align-self:center;margin-left:auto;width:44px;height:26px;border-radius:13px;background:var(--line-2,rgba(255,255,255,.15));position:relative;transition:background .3s cubic-bezier(.32,.72,0,1)}.ds-sw::after{content:\"\";position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .3s cubic-bezier(.32,.72,0,1)}.ds-sw.on{background:var(--chalk,#e9d25a)}.ds-sw.on::after{transform:translateX(18px)}"
     }
   ],
   "narrative": {
     "northStar": "The Tailor's Bench",
-    "overview": "Atelier is a working surface, not a showcase. The artwork sits on a neutral mid-grey desk as a paper sheet with a soft cast shadow; everything else is graphite chrome, thin and translucent, pinned to the edges where a Procreate hand already reaches: a 46px top bar with navigation tools on the left and painting tools on the right, a floating pill sidebar for size and opacity, sheets that drop from the bar with a pointer notch. The interface recedes during long sessions and can be hidden entirely.\n\nThe one colour the chrome owns is tailor's-chalk yellow. It is a marker, not a paint: the 2px underline under the active tool, the tint behind the selected layer or brush, the primary action, a switch turned on, the text caret, the rotate handle of a transform. Sliders read as measuring tapes, ticked every 10%, and every number is set in tabular figures. Text hierarchy comes from ink opacity, not from hue or size jumps.\n\nThe chrome ships in two themes (graphite by default, a warm-paper light theme by preference); on-canvas overlays deliberately ignore the theme and are always drawn as a white-and-dark pair so they read over any pixel.",
+    "overview": "Atelier is a working surface, not a showcase. The artwork sits on a neutral mid-grey desk as a paper sheet with a soft cast shadow; everything else is chrome pinned to the edges where a Procreate hand already reaches: a 48px top bar with navigation and fashion tools on the left and painting tools on the right, a floating pill sidebar for size and opacity, sheets that drop from the bar with a pointer notch. The interface recedes during long sessions and can be hidden entirely.\n\nThe chrome is now real glass rather than tinted panel. Every floating surface is 64-86% opaque over a blur(32px) saturate(180%) backdrop, bounded by a 0.5px hairline and lit by an inset 0.5px top highlight, so the artwork keeps moving underneath it. Surfaces materialize instead of fading: sheets arrive from -10px at 96.5% scale with a 4px blur that resolves, on a single spring-like curve (cubic-bezier(0.32, 0.72, 0, 1)), and every control answers a pointer-down with an instant scale-down (0.965 for buttons, 0.9 for bare icon tools). Radii grew with the material: 10px controls, 18px sheets and bars, 22px dialogs, a 24px sidebar rail.\n\nThe one colour the chrome owns is still tailor's-chalk yellow, and it is still a marker rather than a paint: the wash-plus-ring behind an active tool, the tint behind the selected layer or brush, the primary action, a switch turned on, the text caret, the transform rotate handle, and the dashed guides of the fashion module. Keyboard focus is the one deliberate second hue: a 3.5px system-blue halo, never confused with chalk. Text hierarchy comes from weight and ink opacity, not from hue.\n\nThe fashion module is a peer of the painting tools, not a mode: one top-bar entry (\"Moda\") opens a three-part menu (design the garment / prints / present the collection) that ships technical flats as clipped layer groups, a pattern-fill panel, colorway swapping and a tech-pack dialog. It reuses the same sheets, sliders and buttons; it adds no chrome of its own.",
     "keyCharacteristics": [
-      "Canvas first: chrome is translucent graphite (78% opaque, 18px backdrop blur) over a neutral grey desk.",
-      "One accent, chalk yellow, used only to mark state and the single primary action.",
-      "System UI face throughout; weight and ink opacity carry hierarchy; tabular numerals for all values.",
-      "Rounded, soft geometry: 9px controls, 12px sheets, pill sidebar.",
+      "Canvas first: chrome is translucent glass (64% opaque, 32px blur, 180% saturation) over a neutral grey desk.",
+      "One accent, chalk yellow, for state and the single primary action; one blue, for keyboard focus only.",
+      "System UI face throughout; weight (400-680) and ink opacity carry hierarchy; tabular numerals for all values.",
+      "Soft, large geometry: 10px controls, 18px sheets, 22px dialogs, 24px sidebar rail, 0.5px hairlines.",
+      "Spring motion on one curve, plus a press-scale on every tappable thing.",
       "Measuring-tape sliders with 10% ticks, vertical in the sidebar, horizontal in sheets.",
-      "Soft, diffuse shadows only on things that float over the canvas."
+      "A fashion module that borrows the whole kit: flats, print areas, patterns, colorways, tech packs."
     ],
     "rules": [
       {
         "name": "The Chalk Mark Rule",
-        "body": "Chalk yellow marks what is active, selected or primary, and nothing else. At most one chalk-filled button per surface; every other chalk use is a line, a ring or a 16% wash.",
+        "body": "Chalk yellow marks what is active, selected or primary, and nothing else. At most one chalk-filled button per surface; every other chalk use is a line, a ring, a dashed guide or a 10-16% wash.",
         "section": "colors"
       },
       {
@@ -515,48 +417,72 @@
         "section": "colors"
       },
       {
+        "name": "The Themed Fill Rule",
+        "body": "A surface fill is a token, not a literal: read --track, --sheet-2, --sheet-3, --line so the light theme follows. A raw rgba(255,255,255,…) fill is a bug waiting for the light theme, not a style.",
+        "section": "colors"
+      },
+      {
         "name": "The Theme-Blind Overlay Rule",
-        "body": "Anything drawn on the canvas itself (marching ants, brush cursor, lasso, crop, transform box and handles, clone target, eyedropper loupe) is a white stroke paired with a dark stroke or dark ring, regardless of UI theme, so it reads over any artwork.",
+        "body": "Anything drawn on the artwork itself (marching ants, brush cursor, lasso, crop, transform box and handles, clone target, eyedropper loupe) is a white stroke paired with a dark stroke or dark ring, regardless of UI theme, so it reads over any pixel.",
+        "section": "colors"
+      },
+      {
+        "name": "The Chalk Guide Rule",
+        "body": "The exception to the rule above: fashion guides that describe the garment rather than the edit (print area, repeat-module boundary) are dashed chalk at 80-85% opacity, 1.5px and dash lengths divided by the zoom so they stay hairline at any scale.",
         "section": "colors"
       },
       {
         "name": "The Tabular Figures Rule",
-        "body": "Every number the user reads or scrubs (size, opacity, percent, px dimensions) uses tabular numerals so values don't jitter while dragging.",
+        "body": "Every number the user reads or scrubs (size, opacity, percent, px dimensions, centimetres, tolerances) uses tabular numerals so values don't jitter while dragging.",
         "section": "typography"
       },
       {
         "name": "The Sentence Case Rule",
-        "body": "Labels are sentence case at normal tracking; the chrome carries no uppercase, letter-spaced tags.",
+        "body": "Labels are sentence case at normal tracking; the chrome carries no uppercase, letter-spaced tags, no kickers and no eyebrow lines above titles.",
+        "section": "typography"
+      },
+      {
+        "name": "The Real Weight Rule",
+        "body": "Weights are variable-axis values (550-680) with synthesis off; never fake a weight the face doesn't have.",
         "section": "typography"
       },
       {
         "name": "The Float Only Rule",
-        "body": "Shadows belong to surfaces that float over the canvas; bar-attached chrome gets a hairline and blur instead.",
+        "body": "Big shadows belong to surfaces that float over the canvas; bar-attached chrome gets glass, a hairline and an inset highlight instead.",
         "section": "elevation"
       },
       {
-        "name": "The Frosted Chrome Rule",
-        "body": "Every translucent chrome or sheet surface carries backdrop blur (18px chrome, 20-24px sheets); translucency without blur is not allowed.",
+        "name": "The Real Glass Rule",
+        "body": "Every translucent chrome or sheet surface carries backdrop-filter: blur(32px) saturate(180%); translucency without blur is not allowed, and glass without an accessible fallback is not shipped: under prefers-reduced-transparency: reduce or prefers-contrast: more the same surfaces fall back to opaque Solid Graphite.",
+        "section": "elevation"
+      },
+      {
+        "name": "The One Curve Rule",
+        "body": "Sheets, bars, dialogs, toasts, switch knobs, slider thumbs and artwork hovers all move on cubic-bezier(0.32, 0.72, 0, 1) at 0.16-0.4s; entrances also resolve a 4px blur. Reduced motion collapses every entrance to an 0.18s fade.",
         "section": "elevation"
       }
     ],
     "dos": [
-      "**Do** keep chrome at the edges: top bar (46px), left pill sidebar, sheets dropping from the bar, contextual bars floating 14px above the bottom.",
-      "**Do** pair every translucent surface with backdrop blur and a 1px hairline border.",
-      "**Do** reserve chalk for active, selected and primary states; use the 16% Chalk Wash for selected rows and a 2px chalk line for the active tool.",
+      "**Do** keep chrome at the edges: top bar (48px), sidebar rail, sheets dropping from the bar, contextual bars floating 14px above the bottom.",
+      "**Do** give every translucent surface `blur(32px) saturate(180%)`, a 0.5px hairline and an inset 0.5px top highlight, and keep the opaque fallbacks for reduced transparency and increased contrast.",
+      "**Do** reserve chalk for active, selected and primary states: the 16% wash plus a 40% ring for active tools, the 10-12% tint plus a 38% ring for selected rows, one chalk button per surface.",
+      "**Do** give every tappable element a press response: 0.965 for buttons and segments, 0.9 for bare icon tools, 0.995 for rows.",
+      "**Do** animate on the single house curve `cubic-bezier(0.32, 0.72, 0, 1)` and honour reduced motion.",
       "**Do** tick every continuous slider at 10% intervals and set its value in tabular numerals.",
-      "**Do** draw on-canvas overlays as a white stroke paired with a dark stroke or ring, independent of the UI theme.",
-      "**Do** read every colour from the custom properties so the light theme follows automatically.",
-      "**Do** use the house ease `cubic-bezier(0.22, 1, 0.36, 1)` for entrances and chrome show/hide, and honour reduced motion.",
-      "**Do** keep the keyboard focus ring blue (`2px`, offset `2px`), distinct from chalk."
+      "**Do** draw edit overlays as a white stroke paired with a dark stroke or ring, independent of the UI theme; reserve dashed chalk for fashion guides, scaled by zoom.",
+      "**Do** read every colour and fill from the custom properties so the light theme follows automatically.",
+      "**Do** keep the keyboard focus halo blue (`3.5px`, 55%), distinct from chalk.",
+      "**Do** build new fashion surfaces out of the existing kit: menu rows, sheets, segmented controls, horizontal sliders, switches, one primary button."
     ],
     "donts": [
       "**Don't** introduce docked panel stacks, a menu bar or a tool palette; tools belong in the top bar, sidebar, sheets and contextual bottom bars.",
-      "**Don't** add a second accent hue or use chalk as decoration, background or large fill beyond the single primary button.",
-      "**Don't** use hard or offset shadows; depth is soft and diffuse, and only for floating surfaces.",
-      "**Don't** add uppercase, letter-spaced labels or tags to the chrome.",
-      "**Don't** make chrome opaque over the canvas; the artwork should stay faintly visible behind bars and sheets.",
-      "**Don't** use Procreate's name, icons, brush files or other assets; the interaction model is shared, the identity is Atelier's."
+      "**Don't** add a second accent hue, or use chalk as decoration, background or large fill beyond the single primary button.",
+      "**Don't** use hard or offset shadows; depth is soft, diffuse and paired with glass.",
+      "**Don't** add uppercase, letter-spaced labels, kickers or eyebrow lines to the chrome.",
+      "**Don't** make a glass surface opaque over the canvas except through the accessibility fallbacks; the artwork should stay visible behind bars and sheets.",
+      "**Don't** hard-code a white or black alpha fill where a token exists; unthemed literals break the light theme.",
+      "**Don't** shape an action like a pill: pills are for readouts (the status chip) and the sidebar rail.",
+      "**Don't** use Procreate's name, icons, brush files or other assets, or any real brand's garment artwork; the interaction model is shared, the identity is Atelier's."
     ]
   }
 }

@@ -283,7 +283,7 @@ const jackets: Garment[] = [
       { d: 'M500 178 L500 872', kind: 'line' },
       { d: circle(534, 300, 12), kind: 'thin' }, { d: circle(534, 420, 12), kind: 'thin' },
       { d: circle(534, 540, 12), kind: 'thin' }, { d: circle(534, 660, 12), kind: 'thin' },
-      { d: `M500 178 C560 166 600 140 ${500 + JACKET.nw + 26} 120`, kind: 'rib', mirror: true },
+      { d: `M500 206 C562 198 598 176 ${500 + JACKET.nw + 14} 150`, kind: 'rib', mirror: true },
       { d: 'M596 600 L668 690', kind: 'line', mirror: true },
       { d: `M${500 + 286 - 6} ${JACKET.sy + 24} C${500 + 286 + 40} ${JACKET.sy + 220} ${500 + 286 + 110} ${JACKET.sy + 430} ${500 + 286 + 130} ${JACKET.sy + 566}`, kind: 'line', mirror: true },
     ], []),
