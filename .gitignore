@@ -1,0 +1,7 @@
+node_modules
+dist
+.impeccable/review
+.impeccable/mocks
+*.log
+.DS_Store
+.github
