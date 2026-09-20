@@ -6,7 +6,7 @@ import { ctx2d, makeCanvas, type Canvas } from './util'
 type Node = [number, number] | [number, number, number, number, number, number] // [x,y] line · [x,y,c1x,c1y,c2x,c2y] cubic
 type DetailKind = 'line' | 'stitch' | 'zip' | 'thin' | 'rib' | 'dark'
 interface Detail { d: string; kind: DetailKind; mirror?: boolean }
-export interface View { outline: Node[]; details: Detail[]; print: [number, number, number, number] }
+export interface View { outline: Node[]; details: Detail[]; print: [number, number, number, number]; pair?: boolean }
 export interface Garment { id: string; name: string; group: string; front: View; back: View }
 
 const m = (x: number) => 1000 - x
@@ -23,6 +23,17 @@ function symPath(nodes: Node[]): string {
   for (let i = nodes.length - 1; i >= 1; i--) {
     const n = nodes[i], p = nodes[i - 1]
     d += n.length === 6 ? ` C${m(n[4])} ${n[5]} ${m(n[2])} ${n[3]} ${m(p[0])} ${p[1]}` : ` L${m(p[0])} ${p[1]}`
+  }
+  return d + ' Z'
+}
+
+/** Closes the authored half on its own, for garments that come as a mirrored pair. */
+function halfPath(nodes: Node[]): string {
+  const [x0, y0] = nodes[0]
+  let d = `M${x0} ${y0}`
+  for (let i = 1; i < nodes.length; i++) {
+    const n = nodes[i]
+    d += n.length === 6 ? ` C${n[2]} ${n[3]} ${n[4]} ${n[5]} ${n[0]} ${n[1]}` : ` L${n[0]} ${n[1]}`
   }
   return d + ' Z'
 }
@@ -217,11 +228,12 @@ const tees: Garment[] = [
   },
   {
     id: 'shirt', name: 'Camisa', group: 'Camisetas',
-    ...top({ ...TEE_OVER, nd: 40, nw: 88 }, {
+    ...top({ ...TEE_OVER, nd: 26, nw: 74 }, {
       frontExtra: [
         { d: 'M500 202 L500 900', kind: 'line' },
         { d: 'M540 214 L540 890', kind: 'stitch' },
-        { d: 'M500 206 L404 168 L420 246 L500 262', kind: 'line', mirror: true },
+        { d: 'M500 226 L436 206 L452 272 L500 286 Z', kind: 'line', mirror: true },
+        { d: 'M500 246 L452 226', kind: 'stitch', mirror: true },
         { d: circle(520, 340, 7), kind: 'thin' }, { d: circle(520, 470, 7), kind: 'thin' },
         { d: circle(520, 600, 7), kind: 'thin' }, { d: circle(520, 730, 7), kind: 'thin' },
         { d: 'M606 420 L706 420 L706 520 L606 520 Z', kind: 'line' },
@@ -290,11 +302,12 @@ const jackets: Garment[] = [
   },
   {
     id: 'workwear', name: 'Chaqueta workwear', group: 'Chaquetas',
-    ...top({ ...JACKET, hy: 830, hh: 244 }, {
+    ...top({ ...JACKET, hy: 830, hh: 244, nd: 26, nw: 78 }, {
       frontExtra: [
         { d: 'M500 196 L500 826', kind: 'line' },
         { d: 'M448 196 L448 826', kind: 'stitch', mirror: true },
-        { d: 'M500 200 L392 152 L410 250 L500 268', kind: 'line', mirror: true },
+        { d: 'M500 220 L432 200 L448 266 L500 282 Z', kind: 'line', mirror: true },
+        { d: 'M500 240 L450 220', kind: 'stitch', mirror: true },
         { d: circle(538, 330, 9), kind: 'thin' }, { d: circle(538, 450, 9), kind: 'thin' },
         { d: circle(538, 570, 9), kind: 'thin' }, { d: circle(538, 690, 9), kind: 'thin' },
         { d: 'M584 400 L714 400 L714 510 L584 510 Z', kind: 'line', mirror: true },
@@ -431,17 +444,17 @@ const pants: Garment[] = [
   },
   {
     id: 'shorts', name: 'Pantalón corto', group: 'Pantalones',
-    ...pant(SHORT, [...drawcordPant, { d: 'M566 580 L748 560', kind: 'stitch', mirror: true }], [...backPockets, { d: 'M566 580 L748 560', kind: 'stitch', mirror: true }]),
+    ...pant(SHORT, [...drawcordPant, { d: 'M556 586 L752 564', kind: 'stitch', mirror: true }], [...backPockets, { d: 'M556 586 L752 564', kind: 'stitch', mirror: true }]),
   },
   {
     id: 'shorts-denim', name: 'Short vaquero', group: 'Pantalones',
     ...pant({ ...SHORT, hy: 600, outHalf: 250 }, [
       { d: 'M500 168 L500 402', kind: 'stitch' },
       { d: 'M534 168 C572 200 584 260 586 300', kind: 'line', mirror: true },
-      { d: 'M560 556 L746 536', kind: 'stitch', mirror: true },
+      { d: 'M552 568 L748 546', kind: 'stitch', mirror: true },
     ], [
       { d: 'M566 286 L676 286 L666 372 L572 372 Z', kind: 'line', mirror: true },
-      { d: 'M560 556 L746 536', kind: 'stitch', mirror: true },
+      { d: 'M552 568 L748 546', kind: 'stitch', mirror: true },
     ]),
   },
 ]
@@ -554,39 +567,55 @@ const balaclava: Garment = {
   },
 }
 
+const sockShape: Node[] = [
+  P(556, 210), P(688, 210), P(696, 560),
+  C(836, 726, 706, 660, 812, 676),
+  C(846, 806, 856, 754, 856, 782),
+  C(690, 812, 812, 828, 736, 820),
+  C(566, 640, 622, 796, 566, 720),
+]
+const sockDetails = (back: boolean): Detail[] => [
+  { d: 'M556 302 L692 302', kind: 'line' },
+  ...Array.from({ length: 6 }, (_, i) => ({ d: `M${572 + i * 22} 214 L${572 + i * 22} 298`, kind: 'thin' as const })),
+  ...(back
+    ? [{ d: 'M700 566 C776 600 806 660 812 706', kind: 'line' as const }, { d: 'M690 806 C744 800 800 782 838 752', kind: 'stitch' as const }]
+    : [{ d: 'M690 806 C744 800 800 782 838 752', kind: 'stitch' as const }, { d: 'M818 700 C836 726 848 762 850 790', kind: 'stitch' as const }]),
+]
 const socks: Garment = {
   id: 'socks', name: 'Calcetines', group: 'Accesorios',
-  front: {
-    outline: [P(500, 220), P(578, 220), P(586, 700), C(700, 830, 600, 800, 660, 830), P(700, 880), C(500, 880, 620, 892, 560, 886)],
-    details: [
-      { d: 'M420 300 L580 300', kind: 'line' },
-      ...Array.from({ length: 4 }, (_, i) => ({ d: `M${434 + i * 38} 226 L${434 + i * 38} 296`, kind: 'thin' as const })),
-      { d: 'M586 700 C540 720 480 726 420 722', kind: 'stitch' },
-    ],
-    print: [420, 330, 160, 120],
-  },
-  back: {
-    outline: [P(500, 220), P(578, 220), P(586, 700), C(700, 830, 600, 800, 660, 830), P(700, 880), C(500, 880, 620, 892, 560, 886)],
-    details: [{ d: 'M420 300 L580 300', kind: 'line' }],
-    print: [420, 330, 160, 120],
-  },
+  front: { outline: sockShape, details: sockDetails(false), print: [566, 330, 120, 190], pair: true },
+  back: { outline: sockShape, details: sockDetails(true), print: [566, 330, 120, 190], pair: true },
 }
 
+const boxerShape: Node[] = [
+  P(500, 286), P(706, 286), P(716, 356),
+  C(744, 574, 736, 430, 746, 508),
+  C(624, 606, 706, 600, 668, 606),
+  C(500, 588, 588, 606, 542, 600),
+]
 const boxer: Garment = {
   id: 'boxer', name: 'Bóxer', group: 'Accesorios',
   front: {
-    outline: [P(500, 300), P(716, 300), P(724, 380), C(742, 560, 738, 440, 744, 500), P(560, 590), C(500, 470, 540, 560, 512, 512)],
+    outline: boxerShape,
     details: [
-      { d: `M${m(716)} 380 L716 380`, kind: 'rib' },
-      { d: `M${m(706)} 320 L706 320`, kind: 'stitch' },
-      { d: 'M500 380 C548 420 566 470 562 520', kind: 'stitch', mirror: true },
+      { d: `M${m(710)} 356 L710 356`, kind: 'rib' },
+      { d: `M${m(700)} 300 L700 300`, kind: 'stitch' },
+      { d: `M${m(700)} 342 L700 342`, kind: 'stitch' },
+      { d: 'M500 372 C560 412 596 470 606 556', kind: 'line' },
+      { d: 'M514 380 C568 420 600 476 610 552', kind: 'stitch' },
+      { d: 'M736 552 C696 578 656 592 618 598', kind: 'stitch', mirror: true },
     ],
-    print: [430, 400, 140, 120],
+    print: [560, 390, 140, 140],
   },
   back: {
-    outline: [P(500, 300), P(716, 300), P(724, 380), C(742, 560, 738, 440, 744, 500), P(560, 590), C(500, 470, 540, 560, 512, 512)],
-    details: [{ d: `M${m(716)} 380 L716 380`, kind: 'rib' }, { d: 'M500 380 L500 470', kind: 'stitch' }],
-    print: [430, 400, 140, 120],
+    outline: boxerShape,
+    details: [
+      { d: `M${m(710)} 356 L710 356`, kind: 'rib' },
+      { d: `M${m(700)} 300 L700 300`, kind: 'stitch' },
+      { d: 'M500 356 L500 546', kind: 'line' },
+      { d: 'M736 552 C696 578 656 592 618 598', kind: 'stitch', mirror: true },
+    ],
+    print: [560, 390, 140, 140],
   },
 }
 
@@ -613,28 +642,40 @@ const tote: Garment = {
   },
 }
 
+const packShape: Node[] = [
+  P(500, 236),
+  C(722, 356, 634, 236, 712, 282),
+  C(744, 828, 740, 520, 748, 706),
+  C(500, 872, 738, 866, 618, 872),
+]
 const backpack: Garment = {
   id: 'backpack', name: 'Mochila', group: 'Accesorios',
   front: {
-    outline: [P(500, 200), C(730, 330, 640, 200, 720, 250), C(752, 820, 744, 500, 752, 700), C(500, 880, 744, 872, 620, 880)],
+    outline: packShape,
     details: [
-      { d: 'M500 380 C620 384 700 396 738 404', kind: 'line', mirror: true },
-      { d: 'M338 560 L662 560 L668 740 L332 740 Z', kind: 'line' },
-      { d: 'M348 574 L652 574', kind: 'stitch' },
-      { d: 'M338 500 C420 470 580 470 662 500', kind: 'zip' },
-      { d: 'M420 214 C400 260 400 300 420 340', kind: 'line', mirror: true },
-      { d: circle(500, 300, 22), kind: 'thin' },
+      { d: 'M500 452 C596 450 684 434 718 416', kind: 'line', mirror: true },
+      { d: 'M500 468 C592 466 676 452 710 436', kind: 'stitch', mirror: true },
+      { d: 'M356 584 C420 570 580 570 644 584 L660 752 C560 766 440 766 340 752 Z', kind: 'line' },
+      { d: 'M362 600 C424 588 576 588 638 600', kind: 'zip' },
+      { d: 'M470 240 C470 214 530 214 530 240', kind: 'line' },
+      { d: 'M606 268 C664 292 700 330 716 382', kind: 'line', mirror: true },
+      { d: 'M356 470 L330 470 L330 508 L356 508', kind: 'line', mirror: true },
+      { d: 'M420 796 L580 796', kind: 'stitch' },
     ],
-    print: [400, 240, 200, 200],
+    print: [386, 300, 228, 230],
   },
   back: {
-    outline: [P(500, 200), C(730, 330, 640, 200, 720, 250), C(752, 820, 744, 500, 752, 700), C(500, 880, 744, 872, 620, 880)],
+    outline: packShape,
     details: [
-      { d: 'M556 260 C620 400 618 600 566 800 C556 840 520 848 500 846', kind: 'line', mirror: true },
-      { d: 'M540 300 C592 420 590 600 548 760', kind: 'stitch', mirror: true },
-      { d: 'M420 240 L580 240 L580 330 L420 330 Z', kind: 'line' },
+      { d: 'M424 302 C396 426 396 648 428 802 C436 830 470 832 478 812 C448 656 448 434 476 314 Z', kind: 'line', mirror: true },
+      { d: 'M440 340 C416 452 416 646 444 786', kind: 'stitch', mirror: true },
+      { d: 'M470 240 C470 214 530 214 530 240', kind: 'line' },
+      { d: 'M404 340 C440 326 560 326 596 340', kind: 'line' },
+      { d: 'M388 560 L612 560', kind: 'line' },
+      { d: 'M388 596 L612 596', kind: 'stitch' },
+      { d: 'M436 560 L436 596', kind: 'thin', mirror: true },
     ],
-    print: [400, 380, 200, 200],
+    print: [420, 620, 160, 160],
   },
 }
 
@@ -695,10 +736,13 @@ export function renderGarment(g: Garment, w: number, h: number, o: GarmentOption
   const fx = ctx2d(fill), lx = ctx2d(lines)
   for (const p of placeViews(w, h, o.views)) {
     const v = g[p.view]
-    const outline = new Path2D(symPath(v.outline))
+    const outline = new Path2D(v.pair ? halfPath(v.outline) : symPath(v.outline))
     for (const x of [fx, lx]) { x.save(); x.translate(p.x, p.y); x.scale(p.s, p.s) }
     fx.fillStyle = o.color
     fx.fill(outline)
+    if (v.pair) {
+      fx.save(); fx.translate(1000, 0); fx.scale(-1, 1); fx.fill(outline); fx.restore()
+    }
     const unit = 1 / p.s
     const base = Math.max(1.2, 3 * o.weight * p.s * 1.4) * unit
     lx.strokeStyle = o.lineColor
@@ -707,6 +751,9 @@ export function renderGarment(g: Garment, w: number, h: number, o: GarmentOption
     lx.lineCap = 'round'
     lx.lineWidth = base * 1.3
     lx.stroke(outline)
+    if (v.pair) {
+      lx.save(); lx.translate(1000, 0); lx.scale(-1, 1); lx.stroke(outline); lx.restore()
+    }
     for (const det of v.details) {
       if (det.kind === 'stitch' && !o.stitches) continue
       const path = new Path2D(det.d)
@@ -728,7 +775,7 @@ export function renderGarment(g: Garment, w: number, h: number, o: GarmentOption
         }
       }
       drawOne()
-      if (det.mirror) {
+      if (det.mirror || v.pair) {
         lx.save()
         lx.translate(1000, 0)
         lx.scale(-1, 1)
