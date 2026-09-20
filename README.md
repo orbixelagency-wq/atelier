@@ -35,6 +35,28 @@ El análisis completo frente a Procreate está en [docs/ANALISIS-PROCREATE.md](d
 Dos dedos: deshacer · tres: rehacer · cuatro: pantalla completa · pellizcar: zoom y rotación · mantener pulsado: cuentagotas.
 Teclado: `B` pintar, `E` borrar, `Mayús+S` difuminar, `S` selección, `V` transformar, `L` capas, `C` color, `[` `]` tamaño, `Ctrl+Z` deshacer. La lista completa está en Acciones → Ayuda.
 
+## Instalar como aplicación
+
+Atelier es una PWA: se instala y funciona sin conexión, con su icono y su propia ventana.
+
+- **PC (Chrome o Edge):** abre la web y pulsa **Instalar** en la cabecera, o el icono de instalar de la barra de direcciones.
+- **iPad / iPhone (Safari):** Compartir → **Añadir a pantalla de inicio**.
+- **Android (Chrome):** menú ⋮ → **Instalar aplicación**.
+
+Las obras se guardan en el dispositivo donde instales la app; para pasarlas a otro, expórtalas (.atelier o PSD) e impórtalas allí.
+
+## Publicar en Netlify
+
+El repositorio ya trae  (build , carpeta , redirección SPA y cabeceras de caché).
+
+1. Entra en Netlify → **Add new site → Import an existing project → GitHub** y elige este repositorio.
+2. Netlify lee la configuración del archivo: no hay que tocar nada. Pulsa **Deploy**.
+3. En **Site configuration → Domain management** puedes cambiar el subdominio (por ejemplo ).
+
+Atajo: https://app.netlify.com/start/deploy?repository=https://github.com/orbixelagency-wq/atelier
+
+Cada  a  lanza un despliegue nuevo automáticamente.
+
 ## Desarrollo
 
 ```bash

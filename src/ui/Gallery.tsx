@@ -5,6 +5,7 @@ import { downloadBlob, pickFile, uid } from '../engine/util'
 import { duplicateArt, exportArtPsd, importFileAsNew, newCanvas, openArt, removeArt } from '../state/session'
 import { get, set, toast, useStore } from '../state/store'
 import { Dialog, Seg } from './common'
+import { InstallApp } from './InstallApp'
 
 const PRESETS: { name: string; w: number; h: number; dpi: number }[] = [
   { name: 'Pantalla', w: window.screen.width * Math.min(2, devicePixelRatio || 1), h: window.screen.height * Math.min(2, devicePixelRatio || 1), dpi: 132 },
@@ -78,7 +79,7 @@ export function Gallery() {
   const [urls, setUrls] = useState<Record<string, string>>({})
   const [selecting, setSelecting] = useState(false)
   const [sel, setSel] = useState<Set<string>>(new Set())
-  const [creating, setCreating] = useState(false)
+  const [creating, setCreating] = useState(() => new URLSearchParams(location.search).get('new') === '1')
   const [renaming, setRenaming] = useState<string | null>(null)
   const [usage, setUsage] = useState('')
   const [stackView, setStackView] = useState<string | null>(null)
@@ -142,6 +143,7 @@ export function Gallery() {
           </div>
         ) : <div className="wordmark">Atelier<i /></div>}
         <div className="g-actions">
+          <InstallApp />
           {!!items?.length && <button className="tb-btn" onClick={() => { setSelecting(!selecting); setSel(new Set()) }}>{selecting ? 'Cancelar' : 'Seleccionar'}</button>}
           <button className="tb-btn" onClick={() => importFiles('image/*,.psd,.atelier')} title="Importar imagen, PSD o archivo .atelier"><Upload size={18} /><span className="lbl">Importar</span></button>
           <button className="tb-btn" onClick={() => importFiles('image/*')} title="Abrir una foto"><ImageIcon size={18} /><span className="lbl">Foto</span></button>
