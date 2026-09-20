@@ -9,6 +9,11 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 )
 
+// Ask the browser to keep the artworks: without this, iPadOS and Safari may evict them after a few unused days.
+if (navigator.storage?.persist) {
+  navigator.storage.persisted().then((ok) => { if (!ok) navigator.storage.persist().catch(() => {}) }).catch(() => {})
+}
+
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => navigator.serviceWorker.register(import.meta.env.BASE_URL + 'sw.js').catch(() => {}))
 }
