@@ -47,15 +47,15 @@ Las obras se guardan en el dispositivo donde instales la app; para pasarlas a ot
 
 ## Publicar en Netlify
 
-El repositorio ya trae  (build , carpeta , redirección SPA y cabeceras de caché).
+El repositorio ya trae `netlify.toml`: build `npm run build`, carpeta publicada `dist`, redirección de página única y cabeceras de caché.
 
 1. Entra en Netlify → **Add new site → Import an existing project → GitHub** y elige este repositorio.
 2. Netlify lee la configuración del archivo: no hay que tocar nada. Pulsa **Deploy**.
-3. En **Site configuration → Domain management** puedes cambiar el subdominio (por ejemplo ).
+3. En **Site configuration → Domain management** puedes cambiar el subdominio (por ejemplo `atelier-orbixel.netlify.app`).
 
-Atajo: https://app.netlify.com/start/deploy?repository=https://github.com/orbixelagency-wq/atelier
+Atajo de un clic: https://app.netlify.com/start/deploy?repository=https://github.com/orbixelagency-wq/atelier
 
-Cada  a  lanza un despliegue nuevo automáticamente.
+Cada `git push` a `main` lanza un despliegue nuevo automáticamente.
 
 ## Desarrollo
 
